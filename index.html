@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لینک تعقیب</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .icon { font-size: 60px; }
+        .btn {
+            display: inline-block;
+            background: #0088cc;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .info {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 13px;
+            text-align: left;
+        }
+        .info span { color: #666; }
+        .loading { 
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0088cc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">🔗</div>
+        <h1>لینک خلاص شو!</h1>
+        <p>ستاسو معلومات ثبت شول.</p>
+        <div class="info" id="info">
+            <span>⏳ معلومات ترلاسه کیږي...</span>
+            <div style="text-align:center;margin-top:10px;"><div class="loading"></div></div>
+        </div>
+        <a href="https://t.me/YourBotUsername" class="btn">📱 تلګرام بوټ ته لاړ شئ</a>
+        <p style="font-size:12px;color:#999;margin-top:20px;">© 2026</p>
+    </div>
+
+    <script>
+        // ========== د تلګرام بوټ تنظیمات ==========
+        // دلته خپل BOT_TOKEN او خپل CHAT_ID واچوئ
+        const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
+        const CHAT_ID = "8295417969"; // خپل چاټ آی ډي دلته واچوئ
+        
+        // د URL څخه کوډ ترلاسه کول
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        
+        // د کارونکي معلومات
+        const info = {
+            code: code || 'نامعلوم',
+            browser: navigator.userAgent,
+            language: navigator.language,
+            platform: navigator.platform,
+            time: new Date().toISOString(),
+            referer: document.referrer || 'مستقیم'
+        };
+        
+        // د براوزر معلومول
+        function getBrowser(ua) {
+            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Firefox')) return 'Firefox';
+            if (ua.includes('Safari')) return 'Safari';
+            if (ua.includes('Edge')) return 'Edge';
+            if (ua.includes('Opera')) return 'Opera';
+            return 'نامعلوم';
+        }
+        
+        // معلومات ښودل
+        document.getElementById('info').innerHTML = `
+            <strong>📊 ستاسو معلومات:</strong><br>
+            🔗 کوډ: <code>${info.code}</code><br>
+            🌍 براوزر: ${getBrowser(info.browser)}<br>
+            📱 سیسټم: ${info.platform}<br>
+            🌐 ژبه: ${info.language}<br>
+            ⏰ وخت: ${info.time.replace('T', ' ').slice(0, 16)}<br>
+            🔗 سرچینه: ${info.referer}
+        `;
+        
+        // ========== تلګرام ته معلومات لیږل ==========
+        async function sendToTelegram() {
+            const message = 
+                `🔔 **نوی لیدونکی!**\n\n` +
+                `🌐 **لینک کوډ:** \`${info.code}\`\n` +
+                `🌍 **براوزر:** ${getBrowser(info.browser)}\n` +
+                `📱 **سیسټم:** ${info.platform}\n` +
+                `🌐 **ژبه:** ${info.language}\n` +
+                `⏰ **وخت:** ${info.time.replace('T', ' ').slice(0, 16)}\n` +
+                `🔗 **سرچینه:** ${info.referer}\n\n` +
+                `🔄 د نورو معلوماتو لپاره بوټ ته لاړ شئ!`;
+            
+            try {
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                const data = {
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                };
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                console.log('تلګرام ته واستول شو:', result);
+            } catch (error) {
+                console.log('تېروتنه:', error);
+            }
+        }
+        
+        // معلومات واستوئ
+        sendToTelegram();
+    </script>
+</body>
+</html>
